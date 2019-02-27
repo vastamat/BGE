@@ -24,6 +24,8 @@ public:
 
   FORCEINLINE static Application& Get() { return *s_Instance; }
 
+  FORCEINLINE Window& GetWindow() { return m_Window; }
+
 private:
   bool OnWindowClose(WindowCloseEvent& event);
 

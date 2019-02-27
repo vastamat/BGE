@@ -4,6 +4,7 @@ project(bge-engine)
 add_library(${PROJECT_NAME} SHARED 
   src/core/Application.cpp
   src/ecs/EntityManager.cpp
+  src/input/UnixInput.cpp
   src/logging/Log.cpp
   src/video/UnixWindow.cpp)
 
