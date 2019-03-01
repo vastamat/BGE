@@ -3,6 +3,7 @@
 #include "logging/Log.h"
 
 #include <functional>
+#include <thread>
 
 namespace bge
 {
@@ -11,7 +12,7 @@ Application* Application::s_Instance = nullptr;
 
 Application::Application()
     : m_Window()
-    , m_Running(false)
+    , m_Running(true)
 {
   BGE_CORE_ASSERT(!s_Instance, "Application already exists!");
   s_Instance = this;
@@ -29,6 +30,7 @@ void Application::Run()
   while (m_Running)
   {
     m_Window.OnTick();
+    std::this_thread::sleep_for(std::chrono::milliseconds(16));
   }
 }
 
@@ -42,6 +44,8 @@ void Application::OnEvent(Event& event)
 
 bool Application::OnWindowClose(WindowCloseEvent& event)
 {
+  BGE_CORE_INFO("Closing Window!.");
+
   m_Running = false;
   return true;
 }
