@@ -31,6 +31,7 @@ endif()
 
 #platform independant preprocessor defines
 target_compile_definitions(${PROJECT_NAME} PRIVATE BGE_BUILD_SHARED=1)
+target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE=1)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
@@ -67,9 +68,13 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(contrib/glfw)
 
+# glad
+add_subdirectory(contrib/glad)
+
 # Link libraries (e.g. logging)
 target_link_libraries(${PROJECT_NAME} 
     ${CMAKE_THREAD_LIBS_INIT}     # Needed for unix builds to link to pthread
     spdlog::spdlog
     glfw
+    glad::glad
 )
