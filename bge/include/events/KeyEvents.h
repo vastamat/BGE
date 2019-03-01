@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "input/KeyCodes.h"
 
 namespace bge
 {
@@ -8,21 +9,21 @@ namespace bge
 class BGE_API KeyEvent : public Event
 {
 public:
-  FORCEINLINE int32 GetKeyCode() const { return m_KeyCode; }
+  FORCEINLINE KeyCode GetKeyCode() const { return m_KeyCode; }
 
 protected:
-  KeyEvent(int32 keycode)
+  KeyEvent(KeyCode keycode)
       : m_KeyCode(keycode)
   {
   }
 
-  int32 m_KeyCode;
+  KeyCode m_KeyCode;
 };
 
 class BGE_API KeyPressedEvent : public KeyEvent
 {
 public:
-  KeyPressedEvent(int32 keycode, int32 repeatCount)
+  KeyPressedEvent(KeyCode keycode, int32 repeatCount)
       : KeyEvent(keycode)
       , m_RepeatCount(repeatCount)
   {
@@ -39,7 +40,7 @@ private:
 class BGE_API KeyReleasedEvent : public KeyEvent
 {
 public:
-  KeyReleasedEvent(int32 keycode)
+  KeyReleasedEvent(KeyCode keycode)
       : KeyEvent(keycode)
   {
   }
@@ -50,7 +51,7 @@ public:
 class BGE_API KeyTypedEvent : public KeyEvent
 {
 public:
-  KeyTypedEvent(int keycode)
+  KeyTypedEvent(KeyCode keycode)
       : KeyEvent(keycode)
   {
   }

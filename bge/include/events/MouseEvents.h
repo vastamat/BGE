@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "input/MouseButtonCodes.h"
 
 namespace bge
 {
@@ -44,21 +45,21 @@ private:
 class BGE_API MouseButtonEvent : public Event
 {
 public:
-  FORCEINLINE int32 GetMouseButton() const { return m_Button; }
+  FORCEINLINE MouseButtonCode GetMouseButton() const { return m_Button; }
 
 protected:
-  MouseButtonEvent(int32 button)
+  MouseButtonEvent(MouseButtonCode button)
       : m_Button(button)
   {
   }
 
-  int32 m_Button;
+  MouseButtonCode m_Button;
 };
 
 class BGE_API MouseButtonPressedEvent : public MouseButtonEvent
 {
 public:
-  MouseButtonPressedEvent(int32 button)
+  MouseButtonPressedEvent(MouseButtonCode button)
       : MouseButtonEvent(button)
   {
   }
@@ -69,7 +70,7 @@ public:
 class BGE_API MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:
-  MouseButtonReleasedEvent(int32 button)
+  MouseButtonReleasedEvent(MouseButtonCode button)
       : MouseButtonEvent(button)
   {
   }
