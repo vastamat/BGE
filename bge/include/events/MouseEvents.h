@@ -6,7 +6,7 @@
 namespace bge
 {
 
-class BGE_API MouseMovedEvent : public Event
+class MouseMovedEvent : public Event
 {
 public:
   MouseMovedEvent(float x, float y)
@@ -15,8 +15,8 @@ public:
   {
   }
 
-  FORCEINLINE float GetX() const { return m_MouseX; }
-  FORCEINLINE float GetY() const { return m_MouseY; }
+  FORCEINLINE float GetX() const noexcept { return m_MouseX; }
+  FORCEINLINE float GetY() const noexcept { return m_MouseY; }
 
   EVENT_CLASS_TYPE(MouseMoved)
 
@@ -24,7 +24,7 @@ private:
   float m_MouseX, m_MouseY;
 };
 
-class BGE_API MouseScrolledEvent : public Event
+class MouseScrolledEvent : public Event
 {
 public:
   MouseScrolledEvent(float xOffset, float yOffset)
@@ -33,8 +33,8 @@ public:
   {
   }
 
-  FORCEINLINE float GetXOffset() const { return m_XOffset; }
-  FORCEINLINE float GetYOffset() const { return m_YOffset; }
+  FORCEINLINE float GetXOffset() const noexcept { return m_XOffset; }
+  FORCEINLINE float GetYOffset() const noexcept { return m_YOffset; }
 
   EVENT_CLASS_TYPE(MouseScrolled)
 
@@ -42,10 +42,13 @@ private:
   float m_XOffset, m_YOffset;
 };
 
-class BGE_API MouseButtonEvent : public Event
+class MouseButtonEvent : public Event
 {
 public:
-  FORCEINLINE MouseButtonCode GetMouseButton() const { return m_Button; }
+  FORCEINLINE MouseButtonCode GetMouseButton() const noexcept
+  {
+    return m_Button;
+  }
 
 protected:
   MouseButtonEvent(MouseButtonCode button)
@@ -56,7 +59,7 @@ protected:
   MouseButtonCode m_Button;
 };
 
-class BGE_API MouseButtonPressedEvent : public MouseButtonEvent
+class MouseButtonPressedEvent : public MouseButtonEvent
 {
 public:
   MouseButtonPressedEvent(MouseButtonCode button)
@@ -67,7 +70,7 @@ public:
   EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
-class BGE_API MouseButtonReleasedEvent : public MouseButtonEvent
+class MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:
   MouseButtonReleasedEvent(MouseButtonCode button)

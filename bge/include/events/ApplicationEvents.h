@@ -5,7 +5,7 @@
 namespace bge
 {
 
-class BGE_API WindowResizeEvent : public Event
+class WindowResizeEvent : public Event
 {
 public:
   WindowResizeEvent(uint32 width, uint32 height)
@@ -14,8 +14,8 @@ public:
   {
   }
 
-  FORCEINLINE uint32 GetWidth() const { return m_Width; }
-  FORCEINLINE uint32 GetHeight() const { return m_Height; }
+  FORCEINLINE uint32 GetWidth() const noexcept { return m_Width; }
+  FORCEINLINE uint32 GetHeight() const noexcept { return m_Height; }
 
   EVENT_CLASS_TYPE(WindowResize)
 
@@ -23,7 +23,7 @@ private:
   uint32 m_Width, m_Height;
 };
 
-class BGE_API WindowCloseEvent : public Event
+class WindowCloseEvent : public Event
 {
 public:
   WindowCloseEvent() {}
@@ -31,4 +31,4 @@ public:
   EVENT_CLASS_TYPE(WindowClose)
 };
 
-}
+} // namespace bge

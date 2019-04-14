@@ -6,10 +6,10 @@
 namespace bge
 {
 
-class BGE_API KeyEvent : public Event
+class KeyEvent : public Event
 {
 public:
-  FORCEINLINE KeyCode GetKeyCode() const { return m_KeyCode; }
+  FORCEINLINE KeyCode GetKeyCode() const noexcept { return m_KeyCode; }
 
 protected:
   KeyEvent(KeyCode keycode)
@@ -20,7 +20,7 @@ protected:
   KeyCode m_KeyCode;
 };
 
-class BGE_API KeyPressedEvent : public KeyEvent
+class KeyPressedEvent : public KeyEvent
 {
 public:
   KeyPressedEvent(KeyCode keycode, int32 repeatCount)
@@ -29,7 +29,7 @@ public:
   {
   }
 
-  FORCEINLINE int GetRepeatCount() const { return m_RepeatCount; }
+  FORCEINLINE int GetRepeatCount() const noexcept { return m_RepeatCount; }
 
   EVENT_CLASS_TYPE(KeyPressed)
 
@@ -37,7 +37,7 @@ private:
   int32 m_RepeatCount;
 };
 
-class BGE_API KeyReleasedEvent : public KeyEvent
+class KeyReleasedEvent : public KeyEvent
 {
 public:
   KeyReleasedEvent(KeyCode keycode)
@@ -48,7 +48,7 @@ public:
   EVENT_CLASS_TYPE(KeyReleased)
 };
 
-class BGE_API KeyTypedEvent : public KeyEvent
+class KeyTypedEvent : public KeyEvent
 {
 public:
   KeyTypedEvent(KeyCode keycode)

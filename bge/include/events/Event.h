@@ -48,7 +48,7 @@ enum class EventType
 // which is needed to query the type of the event in the dispatcher.
 // The macro above can be used for an easy way to do that.
 ///////////////////////////////////////////////////////////////
-class BGE_API Event
+class Event
 {
 public:
   bool m_Handled = false;

@@ -26,7 +26,7 @@ struct WindowData
   }
 };
 
-class BGE_API Window
+class Window
 {
   using EventCallbackFn = std::function<void(Event&)>;
 

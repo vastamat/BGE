@@ -10,7 +10,7 @@
 namespace bge
 {
 
-class BGE_API Log
+class Log
 {
 public:
   static void Init();
