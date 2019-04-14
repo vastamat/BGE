@@ -92,3 +92,9 @@ using uintptr = std::uintptr_t;
 #define DELETE_COPY_AND_ASSIGN(T)                                              \
   T(const T& other) = delete;                                                  \
   void operator=(const T& other) = delete;
+
+template <size_t N1, size_t N2> struct GenericHandle
+{
+  uint32 m_Index : N1;
+  uint32 m_Generation : N2;
+};
