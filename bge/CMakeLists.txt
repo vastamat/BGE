@@ -1,18 +1,39 @@
 project(bge-engine)
 
 # Define shared library (only .cpp)
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} STATIC 
   src/core/Application.cpp
+
+  src/ecs/ComponentTraits.cpp
   src/ecs/EntityManager.cpp
+  src/ecs/World.cpp
+
   src/input/UnixInput.cpp
+
   src/logging/Log.cpp
+
+  src/math/AABB.cpp
+  src/math/Transform.cpp
+
+  src/rendering/CameraManager.cpp
+  src/rendering/MeshLibrary.cpp
+  src/rendering/MeshSystem.cpp
+  src/rendering/OpenGLRenderDevice.cpp
+  src/rendering/RenderWorld.cpp
+  src/rendering/ShaderLibrary.cpp
+  src/rendering/Texture2DLibrary.cpp
+
+  src/scheduler/Scheduler.cpp
+  src/scheduler/Task.cpp
+  src/scheduler/WorkStealingQueue.cpp
+
+  src/util/FileIO.cpp
+  src/util/RandomNumberGenerator.cpp
+  
   src/video/UnixWindow.cpp)
 
 # Create nice looking alias for clients of bge to link to 
 add_library(bge::bge ALIAS ${PROJECT_NAME})
-
-# Set Output dir of library to be in build/bin
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Platform specific preprocessor defines
 # PUBLIC  = define is visible to the user of bge
@@ -71,10 +92,18 @@ add_subdirectory(contrib/glfw)
 # glad
 add_subdirectory(contrib/glad)
 
+# stb image
+add_subdirectory(contrib/stb)
+
+# tiny obj loader
+add_subdirectory(contrib/tinyobj)
+
 # Link libraries (e.g. logging)
 target_link_libraries(${PROJECT_NAME} 
     ${CMAKE_THREAD_LIBS_INIT}     # Needed for unix builds to link to pthread
     spdlog::spdlog
     glfw
     glad::glad
+    stb::image
+    tinyobj::tinyobj
 )

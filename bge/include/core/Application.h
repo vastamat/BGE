@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Common.h"
+
+#include "ecs/World.h"
 #include "events/ApplicationEvents.h"
 #include "video/Window.h"
 
@@ -9,7 +11,7 @@
 namespace bge
 {
 
-class BGE_API Application
+class Application
 {
   /// Only 1 Engine Application can be instantiated
   static Application* s_Instance;
@@ -17,6 +19,8 @@ class BGE_API Application
 public:
   Application();
   virtual ~Application();
+
+  DELETE_COPY_AND_ASSIGN(Application)
 
   void Run();
 
@@ -26,14 +30,15 @@ public:
 
   FORCEINLINE Window& GetWindow() { return m_Window; }
 
+  FORCEINLINE World& GetWorld() { return m_World; }
+
 private:
   bool OnWindowClose(WindowCloseEvent& event);
 
+  World m_World;
   Window m_Window;
+
   bool m_Running = true;
 };
-
-// To be defined in CLIENT
-std::unique_ptr<Application> CreateApplication();
 
 } // namespace bge

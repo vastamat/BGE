@@ -9,7 +9,7 @@
 namespace bge
 {
 
-int GetGLFWKeyFromKeyCode(KeyCode key)
+static int GetGLFWKeyFromKeyCode(KeyCode key)
 {
   switch (key)
   {
@@ -201,7 +201,7 @@ int GetGLFWKeyFromKeyCode(KeyCode key)
   return GLFW_KEY_UNKNOWN;
 }
 
-int GetGLFWButtonFromMouseButtonCode(MouseButtonCode button)
+static int GetGLFWButtonFromMouseButtonCode(MouseButtonCode button)
 {
   switch (button)
   {
@@ -213,7 +213,6 @@ int GetGLFWButtonFromMouseButtonCode(MouseButtonCode button)
       return GLFW_MOUSE_BUTTON_MIDDLE;
     case MouseButtonCode::RightMouseButton:
       return GLFW_MOUSE_BUTTON_RIGHT;
-      return GLFW_MOUSE_BUTTON_3;
     case MouseButtonCode::MouseButton4:
       return GLFW_MOUSE_BUTTON_4;
     case MouseButtonCode::MouseButton5:

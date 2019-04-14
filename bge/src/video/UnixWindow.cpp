@@ -7,10 +7,6 @@
 #include "events/MouseEvents.h"
 #include "logging/Log.h"
 
-// Include GLAD before GLFW, because it otherwise causes a compile error on
-// linux
-#include <glad/glad.h>
-
 #include <GLFW/glfw3.h>
 
 namespace bge
@@ -23,7 +19,7 @@ static void GLFWErrorCallback(int error, const char* description)
   BGE_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
-KeyCode GetKeyCodeFromGLFWKey(int key)
+static KeyCode GetKeyCodeFromGLFWKey(int key)
 {
   switch (key)
   {
@@ -215,7 +211,7 @@ KeyCode GetKeyCodeFromGLFWKey(int key)
   return KeyCode::Unknown;
 }
 
-MouseButtonCode GetMouseButtonCodeFromGLFWButton(int button)
+static MouseButtonCode GetMouseButtonCodeFromGLFWButton(int button)
 {
   switch (button)
   {
@@ -279,10 +275,6 @@ public:
                          m_WindowData.m_Title.c_str(), nullptr, nullptr);
 
     glfwMakeContextCurrent(m_NativeWindow);
-
-    // Initialize glad
-    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    BGE_CORE_ASSERT(status, "Failed to initialize Glad!");
 
     glfwSetWindowUserPointer(m_NativeWindow, this);
 
@@ -396,7 +388,6 @@ public:
   {
     glfwPollEvents();
     glfwSwapBuffers(m_NativeWindow);
-    glClear(GL_COLOR_BUFFER_BIT);
   }
 
   // Setters
