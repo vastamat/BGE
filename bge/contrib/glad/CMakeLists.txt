@@ -1,6 +1,6 @@
 project(glad LANGUAGES C)
 
-# Define shared library (only .cpp)
+# Define static library (only .c)
 add_library(${PROJECT_NAME} STATIC src/glad.c)
 
 # Create nice looking alias for clients of bge to link to 
