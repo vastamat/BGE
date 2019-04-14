@@ -2,42 +2,29 @@
 
 #include "Entity.h"
 
-#include <deque>
-#include <vector>
-
 namespace bge
 {
 
-constexpr uint32 c_MinimumFreeIndices = 1024;
-
-class BGE_API EntityManager
+class EntityManager
 {
 public:
-  Entity CreateEntity();
+  EntityId CreateEntity();
+  void DestroyEntity(EntityId id);
 
-  FORCEINLINE bool IsAlive(Entity entity)
-  {
-    return m_Generations[entity.m_Index] == entity.m_Generation;
-  }
-
-  FORCEINLINE void Destroy(Entity entity)
-  {
-    const uint32 index = entity.m_Index;
-    ++m_Generations[index];
-    m_FreeIndices.push_back(index);
-  }
+  Entity* LookUpEntity(EntityId id);
 
 private:
-  FORCEINLINE Entity MakeEntity(uint32 index, uint8 generation)
-  {
-    Entity newEntity;
-    newEntity.m_Index = index;
-    newEntity.m_Generation = generation;
-    return newEntity;
-  }
+  /// Component data array.
+  std::vector<Entity> m_Entities;
+  /// Component Id to Index mapping.
+  std::vector<uint32> m_EntityIdToIndex;
+  /// Vector of component version numbers. Incremented each time an entity is
+  /// destroyed
+  std::vector<uint8> m_EntityVersion;
+  /// List of available entity slots.
+  std::vector<uint32> m_FreeList;
 
-  std::vector<uint8> m_Generations;
-  std::deque<uint32> m_FreeIndices;
+  uint32 m_IndexCounter = 0;
 };
 
 } // namespace bge

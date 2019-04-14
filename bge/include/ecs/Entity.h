@@ -1,31 +1,70 @@
 #pragma once
 
-#include "core/Common.h"
+#include "ComponentTraits.h"
+
+#include "logging/Log.h"
+
+#include <vector>
 
 namespace bge
 {
 
-constexpr int c_IndexBits = 24;
-constexpr int c_GenerationBits = 8;
+/* When spawning a component, each subworld simply returns the ID of that
+ * component, which gets stored inside the entity.*/
 
-struct BGE_API Entity
+/* The entity itself just stores two integer arrays: one containing the
+ * component IDs, one containing the component types.*/
+class Entity
 {
-  uint32 m_Index : c_IndexBits;
-  uint32 m_Generation : c_GenerationBits;
-
-  FORCEINLINE uint32 GetId() const { return m_Index; }
-  FORCEINLINE uint32 GetGeneration() const { return m_Generation; }
-
-  FORCEINLINE bool IsNull() const { return m_Index == 0u; }
-
-  FORCEINLINE bool operator==(const Entity& _Rhs) const
+public:
+  template <typename T> void AddComponent(ComponentHandle handle)
   {
-    return m_Index == _Rhs.m_Index;
+    m_ComponentIDs.push_back(handle);
+    m_ComponentTypes.push_back(ComponentTypeToId<T>::ID);
   }
-  FORCEINLINE bool operator!=(const Entity& _Rhs) const
+
+  template <typename T> void RemoveComponent()
   {
-    return m_Index != _Rhs.m_Index;
+    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
+    {
+      if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
+      {
+        std::swap(m_ComponentIDs[i], m_ComponentIDs[m_ComponentIDs.size() - 1]);
+        m_ComponentIDs.pop_back();
+
+        std::swap(m_ComponentTypes[i],
+                  m_ComponentTypes[m_ComponentTypes.size() - 1]);
+        m_ComponentTypes.pop_back();
+      }
+    }
   }
+
+  template <typename T> ComponentHandle GetComponentHandle()
+  {
+    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
+    {
+      if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
+      {
+        return m_ComponentIDs[i];
+      }
+    }
+
+    BGE_CORE_ASSERT(false, "Unable to find component of ID: {0} in entity.",
+                    ComponentTypeToId<T>::ID);
+
+    return ComponentHandle();
+  }
+
+private:
+  std::vector<ComponentHandle> m_ComponentIDs;
+  std::vector<uint16> m_ComponentTypes;
+};
+
+// Struct to identify an entity in the world
+struct EntityId
+{
+  uint32 m_Index : 24;
+  uint32 m_Generation : 8;
 };
 
 } // namespace bge
