@@ -1,7 +1,5 @@
 #include "rendering/MeshSystem.h"
 
-#include "rendering/Camera.h"
-
 namespace bge
 {
 
