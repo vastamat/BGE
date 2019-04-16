@@ -98,6 +98,9 @@ add_subdirectory(contrib/stb)
 # tiny obj loader
 add_subdirectory(contrib/tinyobj)
 
+# nudge
+add_subdirectory(contrib/nudge)
+
 # Link libraries (e.g. logging)
 target_link_libraries(${PROJECT_NAME} 
     ${CMAKE_THREAD_LIBS_INIT}     # Needed for unix builds to link to pthread
@@ -106,4 +109,5 @@ target_link_libraries(${PROJECT_NAME}
     glad::glad
     stb::image
     tinyobj::tinyobj
+    nudge::nudge
 )
