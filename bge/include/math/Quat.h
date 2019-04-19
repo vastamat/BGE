@@ -19,6 +19,8 @@ public:
     m_Elements[3] = static_cast<T>(1.0);
   }
 
+  explicit Quat(T val[4]) { memcpy(m_Elements, val, 4 * sizeof(T)); }
+
   // ------------------------------------------------------------------------------
 
   Quat(T x, T y, T z, T w)

@@ -20,6 +20,8 @@ template <typename T, uint32 Size> class Vec
 public:
   Vec() { memset(m_Elements, 0, Size * sizeof(T)); }
 
+  explicit Vec(T val[Size]) { memcpy(m_Elements, val, Size * sizeof(T)); }
+
   // ------------------------------------------------------------------------------
 
   explicit Vec(T val)
