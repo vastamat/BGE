@@ -6,20 +6,21 @@
 #include "ecs/ComponentTraits.h"
 #include "logging/Log.h"
 #include "math/Mat.h"
+#include "physics/PhysicsDevice.h"
 
 namespace bge
 {
 
-struct MeshData
+struct PhysicalMeshData
 {
   Mesh m_Mesh;
-  Mat4f m_Transform;
   Material m_Material;
 };
 
-class MeshSystem
+class PhysicalMeshSystem
 {
 public:
+  void UpdateTransforms(TransformsContainer transforms);
   void RenderMeshes(const Mat4f& projection, const Mat4f& view);
 
   // Default template function to destroy just asserts as it should never be
@@ -45,7 +46,9 @@ public:
 
 private:
   /// Component data array.
-  std::vector<MeshData> m_Meshes;
+  std::vector<PhysicalMeshData> m_Meshes;
+  std::vector<Mat4f> m_Transforms;
+
   /// Component Id to Index mapping.
   std::vector<uint32> m_ComponentIdToIndex;
   /// Vector of component version numbers. Incremented each time an entity is

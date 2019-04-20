@@ -1,30 +1,49 @@
-#include "rendering/MeshSystem.h"
+#include "rendering/PhysicalMeshSystem.h"
+
+#include "math/Quat.h"
 
 namespace bge
 {
 
-void MeshSystem::RenderMeshes(const Mat4f& projection, const Mat4f& view)
+void PhysicalMeshSystem::UpdateTransforms(TransformsContainer transforms)
 {
-  for (const auto& instance : m_Meshes)
+  BGE_CORE_ASSERT(transforms.m_Count == m_Meshes.size(),
+                  "Uneven amount of physical transforms and graphic instances");
+
+  m_Transforms.resize(transforms.m_Count);
+  for (size_t i = 0; i < transforms.m_Count; i++)
   {
-    RenderDevice::BindShaderProgram(instance.m_Material.m_Shader);
+    m_Transforms[i] =
+        GenTranslationMat(Vec3f(transforms.m_Transforms[i].m_Position)) *
+        Quatf(transforms.m_Transforms[i].m_Rotation).ToMat4() *
+        GenScalingMat(Vec3f(1.0f));
+  }
+}
 
-    RenderDevice::SetUniformMat4(instance.m_Material.m_Shader, "in_Projection",
-                                 projection);
-    RenderDevice::SetUniformMat4(instance.m_Material.m_Shader, "in_View", view);
-    RenderDevice::SetUniformMat4(instance.m_Material.m_Shader, "in_Model",
-                                 instance.m_Transform);
+void PhysicalMeshSystem::RenderMeshes(const Mat4f& projection,
+                                      const Mat4f& view)
+{
+  for (size_t i = 0; i < m_Meshes.size(); ++i)
+  {
+    RenderDevice::BindShaderProgram(m_Meshes[i].m_Material.m_Shader);
 
-    for (size_t i = 0; i < instance.m_Material.m_Textures.size(); i++)
+    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader,
+                                 "in_Projection", projection);
+    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader, "in_View",
+                                 view);
+    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader, "in_Model",
+                                 m_Transforms[i]);
+
+    for (size_t i = 0; i < m_Meshes[i].m_Material.m_Textures.size(); i++)
     {
-      RenderDevice::BindTexture2D(instance.m_Material.m_Textures[i], i);
+      RenderDevice::BindTexture2D(m_Meshes[i].m_Material.m_Textures[i], i);
     }
 
-    RenderDevice::Draw(instance.m_Mesh.m_VertexArray,
-                       instance.m_Mesh.m_IndexBuffer,
-                       instance.m_Mesh.m_IndicesCount);
+    RenderDevice::Draw(m_Meshes[i].m_Mesh.m_VertexArray,
+                       m_Meshes[i].m_Mesh.m_IndexBuffer,
+                       m_Meshes[i].m_Mesh.m_IndicesCount);
 
-    for (int i = instance.m_Material.m_Textures.size() - 1; i >= 0; i--)
+    for (int i = m_Meshes[i].m_Material.m_Textures.size() - 1; i >= 0; i--)
     {
       RenderDevice::UnbindTexture2D(i);
     }
@@ -32,7 +51,8 @@ void MeshSystem::RenderMeshes(const Mat4f& projection, const Mat4f& view)
 }
 
 template <>
-ComponentHandle MeshSystem::AddComponent<MeshData>(const MeshData& data)
+ComponentHandle
+PhysicalMeshSystem::AddComponent<PhysicalMeshData>(const PhysicalMeshData& data)
 {
   ComponentHandle handle;
   if (m_FreeList.empty())
@@ -59,7 +79,9 @@ ComponentHandle MeshSystem::AddComponent<MeshData>(const MeshData& data)
   return handle;
 }
 
-template <> void MeshSystem::DestroyComponent<MeshData>(ComponentHandle handle)
+template <>
+void PhysicalMeshSystem::DestroyComponent<PhysicalMeshData>(
+    ComponentHandle handle)
 {
   // assert this operation is valid
   BGE_CORE_ASSERT(m_ComponentVersion[handle.m_Index] == handle.m_Generation,
@@ -98,7 +120,8 @@ template <> void MeshSystem::DestroyComponent<MeshData>(ComponentHandle handle)
 }
 
 template <>
-MeshData MeshSystem::LookUpComponent<MeshData>(ComponentHandle handle)
+PhysicalMeshData
+PhysicalMeshSystem::LookUpComponent<PhysicalMeshData>(ComponentHandle handle)
 {
   BGE_CORE_ASSERT(m_ComponentVersion[handle.m_Index] == handle.m_Generation,
                   "Trying to lookup a component handle that's been deleted.");

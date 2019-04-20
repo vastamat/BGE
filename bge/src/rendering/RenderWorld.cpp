@@ -14,6 +14,11 @@ RenderWorld::RenderWorld()
   //     Vec4i32(0, window.GetHeight(), window.GetWidth(), 0), -1.0f, 1.0f);
 }
 
+void RenderWorld::UpdateTransforms(TransformsContainer transforms)
+{
+  m_PhysicalMeshSystem.UpdateTransforms(std::move(transforms));
+}
+
 void RenderWorld::Render(float interpolation)
 {
   RenderDevice::ClearBuffers(true, true);
@@ -30,6 +35,7 @@ void RenderWorld::Render(float interpolation)
                               viewport[3]);
 
     m_MeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
+    m_PhysicalMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
   }
 }
 
@@ -69,6 +75,12 @@ Texture2DHandle RenderWorld::LoadTexture2D(const std::string& filepath)
 template <> MeshSystem* RenderWorld::GetComponentSystem<MeshSystem>()
 {
   return &m_MeshSystem;
+}
+
+template <>
+PhysicalMeshSystem* RenderWorld::GetComponentSystem<PhysicalMeshSystem>()
+{
+  return &m_PhysicalMeshSystem;
 }
 
 } // namespace bge

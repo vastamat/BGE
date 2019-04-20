@@ -8,7 +8,7 @@ namespace bge
 // helper template that yields the corresponding component type to any ID type
 // at compile-time via an inner typedef named Type. specialized in other modules
 // (graphics, game, ...)
-template <typename T> struct ComponentIdToComponent
+template <uint32 ID> struct ComponentIdToComponent
 {
 };
 

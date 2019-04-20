@@ -15,10 +15,16 @@ add_library(${PROJECT_NAME} STATIC
   src/math/AABB.cpp
   src/math/Transform.cpp
 
+  src/physics/BoxSystem.cpp
+  src/physics/PhysicsDevice.cpp
+  src/physics/PhysicsWorld.cpp
+  src/physics/SphereSystem.cpp
+
   src/rendering/CameraManager.cpp
   src/rendering/MeshLibrary.cpp
   src/rendering/MeshSystem.cpp
   src/rendering/OpenGLRenderDevice.cpp
+  src/rendering/PhysicalMeshSystem.cpp
   src/rendering/RenderWorld.cpp
   src/rendering/ShaderLibrary.cpp
   src/rendering/Texture2DLibrary.cpp

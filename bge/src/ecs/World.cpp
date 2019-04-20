@@ -6,6 +6,7 @@ namespace bge
 World::World()
     : m_EntityManager()
     , m_RenderWorld()
+    , m_PhysicsWorld()
 {
 }
 
@@ -24,7 +25,9 @@ void World::Update(float deltaTime)
 {
   // m_gameWorld.Update();
   // m_audioWorld.Update();
-  // m_physicsWorld.Update();
+  m_PhysicsWorld.Simulate();
+
+  m_RenderWorld.UpdateTransforms(PhysicsDevice::GetAllBodiesTransforms());
 }
 
 void World::Render(float interpolation) { m_RenderWorld.Render(interpolation); }
@@ -37,11 +40,20 @@ void World::OnEvent(Event& event)
       BGE_BIND_EVENT_FN(World::OnWindowClose));
 }
 
-bool World::OnWindowClose(WindowCloseEvent& event) { m_RenderWorld.OnExit(); }
+bool World::OnWindowClose(WindowCloseEvent& event)
+{
+  m_RenderWorld.OnExit();
+  return true;
+}
 
 template <> RenderWorld* World::GetComponentWorld<RenderWorld>()
 {
   return &m_RenderWorld;
+}
+
+template <> PhysicsWorld* World::GetComponentWorld<PhysicsWorld>()
+{
+  return &m_PhysicsWorld;
 }
 
 } // namespace bge

@@ -2,7 +2,9 @@
 
 #include "ComponentTraits.h"
 #include "EntityManager.h"
+
 #include "events/ApplicationEvents.h"
+#include "physics/PhysicsWorld.h"
 #include "rendering/RenderWorld.h"
 
 namespace bge
@@ -43,7 +45,7 @@ public:
     return handle;
   }
 
-  template <typename T> T* LookUpComponent(ComponentHandle handle)
+  template <typename T> T LookUpComponent(ComponentHandle handle)
   {
     using WorldType = typename ComponentIdToWorld<T>::Type;
     return GetComponentWorld<WorldType>()->LookUpComponent(handle);
@@ -55,6 +57,7 @@ private:
   EntityManager m_EntityManager;
 
   RenderWorld m_RenderWorld;
+  PhysicsWorld m_PhysicsWorld;
 };
 
 } // namespace bge

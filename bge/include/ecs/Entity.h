@@ -19,13 +19,21 @@ class Entity
 public:
   template <typename T> void AddComponent(ComponentHandle handle)
   {
+    BGE_CORE_ASSERT(!HasComponent<T>(),
+                    "Componet T with ID {0} is already part of this entity.",
+                    ComponentTypeToId<T>::ID);
+
     m_ComponentIDs.push_back(handle);
     m_ComponentTypes.push_back(ComponentTypeToId<T>::ID);
   }
 
   template <typename T> void RemoveComponent()
   {
-    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
+    BGE_CORE_ASSERT(HasComponent<T>(),
+                    "Componet T with ID {0} is not part of this entity.",
+                    ComponentTypeToId<T>::ID);
+
+    for (size_t i = 0; i < m_ComponentTypes.size(); ++i)
     {
       if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
       {
@@ -41,7 +49,11 @@ public:
 
   template <typename T> ComponentHandle GetComponentHandle()
   {
-    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
+    BGE_CORE_ASSERT(HasComponent<T>(),
+                    "Componet T with ID {0} is not part of this entity.",
+                    ComponentTypeToId<T>::ID);
+
+    for (size_t i = 0; i < m_ComponentTypes.size(); ++i)
     {
       if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
       {
@@ -49,10 +61,18 @@ public:
       }
     }
 
-    BGE_CORE_ASSERT(false, "Unable to find component of ID: {0} in entity.",
-                    ComponentTypeToId<T>::ID);
-
     return ComponentHandle();
+  }
+  template <typename T> bool HasComponent()
+  {
+    for (size_t i = 0; i < m_ComponentTypes.size(); ++i)
+    {
+      if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
 private:

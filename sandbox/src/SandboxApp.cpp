@@ -9,6 +9,8 @@ public:
   {
     auto& world = GetWorld();
     auto* renderWorld = world.GetComponentWorld<bge::RenderWorld>();
+    auto* physicsWorld = world.GetComponentWorld<bge::PhysicsWorld>();
+
     renderWorld->AddCamera(bge::Vec4i32(0, 0, 1280, 720), 60.0f, 0.1f, 100.0f);
 
     bge::EntityId entity = world.CreateEntity();
@@ -24,6 +26,10 @@ public:
         renderWorld->LoadTexture2D("res/textures/bricks.jpg"));
 
     world.AddComponent(entity, meshCompData);
+
+    bge::Box box = physicsWorld->CreateBox(1.0f, 1.0f, 1.0f, 1.0f);
+    bge::BoxData boxData{box};
+    world.AddComponent(entity, boxData);
   }
 
   ~Sandbox() {}

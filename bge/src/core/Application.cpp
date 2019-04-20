@@ -1,7 +1,9 @@
 #include "core/Application.h"
 
 #include "logging/Log.h"
+#include "physics/PhysicsDevice.h"
 #include "rendering/RenderDevice.h"
+#include "scheduler/Scheduler.h"
 
 #include <functional>
 #include <thread>
@@ -22,10 +24,16 @@ Application::Application()
   m_Window.Create(WindowData("BGE Window"));
   m_Window.SetEventCallback(BGE_BIND_EVENT_FN(Application::OnEvent));
 
+  Scheduler::Initialize();
   RenderDevice::Initialize();
+  PhysicsDevice::Initialize();
 }
 
-Application::~Application() { RenderDevice::Shutdown(); }
+Application::~Application()
+{
+  RenderDevice::Shutdown();
+  Scheduler::Shutdown();
+}
 
 void Application::Run()
 {

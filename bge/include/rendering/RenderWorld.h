@@ -3,6 +3,7 @@
 #include "CameraManager.h"
 #include "MeshLibrary.h"
 #include "MeshSystem.h"
+#include "PhysicalMeshSystem.h"
 #include "ShaderLibrary.h"
 #include "Texture2DLibrary.h"
 
@@ -14,6 +15,7 @@ class RenderWorld
 public:
   RenderWorld();
 
+  void UpdateTransforms(TransformsContainer transforms);
   void Render(float interpolation);
   void OnExit();
 
@@ -36,7 +38,7 @@ public:
     return GetComponentSystem<SystemType>()->AddComponent(data);
   }
 
-  template <typename T> T* LookUpComponent(ComponentHandle handle)
+  template <typename T> T LookUpComponent(ComponentHandle handle)
   {
     using SystemType = typename ComponentIdToSystem<T>::Type;
     return GetComponentSystem<SystemType>()->LookUpComponent(handle);
@@ -47,6 +49,7 @@ public:
 private:
   // Systems
   MeshSystem m_MeshSystem;
+  PhysicalMeshSystem m_PhysicalMeshSystem;
 
   // Resource Libraries
   MeshLibrary m_MeshLibrary;
@@ -65,12 +68,28 @@ template <> struct ComponentIdToWorld<MeshData>
   using Type = WorldType;
 };
 
+template <> struct ComponentIdToWorld<PhysicalMeshData>
+{
+  using WorldType = RenderWorld;
+  using Type = WorldType;
+};
+
 // helper struct that defines the corresponding system for each component ID in
 // an inner Type typedef
 template <> struct ComponentIdToSystem<MeshData>
 {
   using SystemType = MeshSystem;
   using Type = SystemType;
+};
+
+template <> struct ComponentIdToSystem<PhysicalMeshData>
+{
+  using SystemType = PhysicalMeshSystem;
+  using Type = SystemType;
+};
+
+template <> struct ComponentIdToComponent<ComponentTypeToId<MeshData>::ID>
+{
 };
 
 } // namespace bge
