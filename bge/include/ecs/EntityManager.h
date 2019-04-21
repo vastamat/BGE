@@ -2,29 +2,27 @@
 
 #include "Entity.h"
 
+#include <deque>
+#include <vector>
+
 namespace bge
 {
 
 class EntityManager
 {
 public:
-  EntityId CreateEntity();
-  void DestroyEntity(EntityId id);
+  Entity CreateEntity();
+  void DestroyEntity(Entity id);
 
-  Entity* LookUpEntity(EntityId id);
+  FORCEINLINE bool IsAlive(Entity entity) const
+  {
+    return m_EntityVersion[entity.GetId()] == entity.GetGeneration();
+  }
 
 private:
-  /// Component data array.
-  std::vector<Entity> m_Entities;
-  /// Component Id to Index mapping.
-  std::vector<uint32> m_EntityIdToIndex;
-  /// Vector of component version numbers. Incremented each time an entity is
-  /// destroyed
   std::vector<uint8> m_EntityVersion;
   /// List of available entity slots.
-  std::vector<uint32> m_FreeList;
-
-  uint32 m_IndexCounter = 0;
+  std::deque<uint32> m_FreeList;
 };
 
 } // namespace bge

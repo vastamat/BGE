@@ -3,9 +3,11 @@
 #include "Material.h"
 #include "Mesh.h"
 
-#include "ecs/ComponentTraits.h"
+#include "ecs/Entity.h"
 #include "logging/Log.h"
 #include "math/Mat.h"
+
+#include <unordered_map>
 
 namespace bge
 {
@@ -20,41 +22,17 @@ struct MeshData
 class MeshSystem
 {
 public:
+  MeshSystem();
   void RenderMeshes(const Mat4f& projection, const Mat4f& view);
 
-  // Default template function to destroy just asserts as it should never be
-  // called, only the explicit specializations in .cpp must be used
-  template <typename T> void DestroyComponent(ComponentHandle handle)
-  {
-    BGE_CORE_ASSERT(false, "Trying to destroy an unknown component type");
-  }
-
-  // Same as above
-  template <typename T> ComponentHandle AddComponent(const T& data)
-  {
-    BGE_CORE_ASSERT(false, "Trying to destroy an unknown component type");
-    return ComponentHandle();
-  }
-
-  // Same
-  template <typename T> T* LookUpComponent(ComponentHandle handle)
-  {
-    BGE_CORE_ASSERT(false, "Trying to find an unknown component type");
-    return nullptr;
-  }
+  void AddComponent(Entity entity, const MeshData& data);
+  void DestroyComponent(Entity entity);
+  MeshData* LookUpComponent(Entity entity);
 
 private:
-  /// Component data array.
+  std::unordered_map<uint32, uint32> m_EntityToComponentId;
   std::vector<MeshData> m_Meshes;
-  /// Component Id to Index mapping.
-  std::vector<uint32> m_ComponentIdToIndex;
-  /// Vector of component version numbers. Incremented each time an entity is
-  /// destroyed
-  std::vector<uint8> m_ComponentVersion;
-  /// List of available entity slots.
-  std::vector<uint32> m_FreeList;
-
-  uint32 m_IndexCounter = 0;
+  std::vector<Entity> m_Entities;
 };
 
 } // namespace bge

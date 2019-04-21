@@ -1,70 +1,48 @@
 #pragma once
 
-#include "ComponentTraits.h"
-
-#include "logging/Log.h"
-
-#include <vector>
+#include "core/Common.h"
 
 namespace bge
 {
 
-/* When spawning a component, each subworld simply returns the ID of that
- * component, which gets stored inside the entity.*/
+constexpr uint32 c_EntityIndexBits = 22u;
+constexpr uint32 c_EntityIndexMask = (1u << c_EntityIndexBits) - 1u;
+constexpr uint32 c_EntityGenerationBits = 8u;
+constexpr uint32 c_EntityGenerationMask = (1u << c_EntityGenerationBits) - 1u;
 
-/* The entity itself just stores two integer arrays: one containing the
- * component IDs, one containing the component types.*/
 class Entity
 {
 public:
-  template <typename T> void AddComponent(ComponentHandle handle)
+  explicit Entity(uint32 id)
+      : m_ID(id)
   {
-    m_ComponentIDs.push_back(handle);
-    m_ComponentTypes.push_back(ComponentTypeToId<T>::ID);
   }
 
-  template <typename T> void RemoveComponent()
+  Entity(uint32 id, uint8 generation)
+      : m_ID(generation)
   {
-    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
-    {
-      if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
-      {
-        std::swap(m_ComponentIDs[i], m_ComponentIDs[m_ComponentIDs.size() - 1]);
-        m_ComponentIDs.pop_back();
-
-        std::swap(m_ComponentTypes[i],
-                  m_ComponentTypes[m_ComponentTypes.size() - 1]);
-        m_ComponentTypes.pop_back();
-      }
-    }
+    m_ID = (m_ID << c_EntityIndexBits) | id;
   }
 
-  template <typename T> ComponentHandle GetComponentHandle()
+  FORCEINLINE uint32 GetId() const { return m_ID & c_EntityIndexMask; }
+  FORCEINLINE uint32 GetGeneration() const
   {
-    for (size_t i = 0; i < m_ComponentTypes.size(); i++)
-    {
-      if (m_ComponentTypes[i] == ComponentTypeToId<T>::ID)
-      {
-        return m_ComponentIDs[i];
-      }
-    }
+    return (m_ID >> c_EntityIndexBits) & c_EntityGenerationMask;
+  }
 
-    BGE_CORE_ASSERT(false, "Unable to find component of ID: {0} in entity.",
-                    ComponentTypeToId<T>::ID);
+  FORCEINLINE bool IsNull() const { return m_ID == 0u; }
 
-    return ComponentHandle();
+  FORCEINLINE bool operator==(const Entity& rhs) const
+  {
+    return m_ID == rhs.m_ID;
+  }
+  FORCEINLINE bool operator!=(const Entity& rhs) const
+  {
+    return m_ID != rhs.m_ID;
   }
 
 private:
-  std::vector<ComponentHandle> m_ComponentIDs;
-  std::vector<uint16> m_ComponentTypes;
-};
-
-// Struct to identify an entity in the world
-struct EntityId
-{
-  uint32 m_Index : 24;
-  uint32 m_Generation : 8;
+  uint32 m_ID = 0u;
 };
 
 } // namespace bge

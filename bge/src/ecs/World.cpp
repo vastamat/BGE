@@ -11,14 +11,9 @@ World::World()
 
 World::~World() {}
 
-EntityId World::CreateEntity() { return m_EntityManager.CreateEntity(); }
+Entity World::CreateEntity() { return m_EntityManager.CreateEntity(); }
 
-void World::DestroyEntity(EntityId id) { m_EntityManager.DestroyEntity(id); }
-
-Entity* World::LookUpEntity(EntityId id)
-{
-  return m_EntityManager.LookUpEntity(id);
-}
+void World::DestroyEntity(Entity id) { m_EntityManager.DestroyEntity(id); }
 
 void World::Update(float deltaTime)
 {
@@ -38,10 +33,5 @@ void World::OnEvent(Event& event)
 }
 
 bool World::OnWindowClose(WindowCloseEvent& event) { m_RenderWorld.OnExit(); }
-
-template <> RenderWorld* World::GetComponentWorld<RenderWorld>()
-{
-  return &m_RenderWorld;
-}
 
 } // namespace bge

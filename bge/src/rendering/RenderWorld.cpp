@@ -66,9 +66,4 @@ Texture2DHandle RenderWorld::LoadTexture2D(const std::string& filepath)
   return m_TextureLibrary.GetTexture(filepath);
 }
 
-template <> MeshSystem* RenderWorld::GetComponentSystem<MeshSystem>()
-{
-  return &m_MeshSystem;
-}
-
 } // namespace bge
