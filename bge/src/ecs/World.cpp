@@ -11,9 +11,20 @@ World::World()
 
 World::~World() {}
 
+void World::SetEventCallback(const std::function<void(Event&)>& callback)
+{
+  m_EventCallback = callback;
+
+  m_RenderWorld.SetEventCallback(callback);
+  m_GameWorld.SetEventCallback(callback);
+}
+
 Entity World::CreateEntity() { return m_EntityManager.CreateEntity(); }
 
-void World::DestroyEntity(Entity id) { m_EntityManager.DestroyEntity(id); }
+void World::DestroyEntity(Entity entity)
+{
+  m_EntityManager.DestroyEntity(entity);
+}
 
 void World::Update(float deltaTime)
 {

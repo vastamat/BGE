@@ -24,7 +24,9 @@ enum class EventType
   MouseButtonPressed,
   MouseButtonReleased,
   MouseMoved,
-  MouseScrolled
+  MouseScrolled,
+  ComponentAdded,
+  ComponentRemoved
 };
 
 // enum EventCategory

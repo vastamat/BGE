@@ -21,6 +21,7 @@ Application::Application()
 
   m_Window.Create(WindowData("BGE Window"));
   m_Window.SetEventCallback(BGE_BIND_EVENT_FN(Application::OnEvent));
+  m_World.SetEventCallback(BGE_BIND_EVENT_FN(Application::OnEvent));
 
   RenderDevice::Initialize();
 }

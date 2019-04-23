@@ -13,11 +13,6 @@ constexpr uint32 c_EntityGenerationMask = (1u << c_EntityGenerationBits) - 1u;
 class Entity
 {
 public:
-  explicit Entity(uint32 id)
-      : m_ID(id)
-  {
-  }
-
   Entity(uint32 id, uint8 generation)
       : m_ID(generation)
   {
@@ -39,6 +34,10 @@ public:
   FORCEINLINE bool operator!=(const Entity& rhs) const
   {
     return m_ID != rhs.m_ID;
+  }
+  FORCEINLINE bool operator<(const Entity& rhs) const
+  {
+    return m_ID < rhs.m_ID;
   }
 
 private:

@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
 
   src/ecs/ComponentTraits.cpp
   src/ecs/EntityManager.cpp
+  src/ecs/GameWorld.cpp
   src/ecs/World.cpp
 
   src/input/UnixInput.cpp

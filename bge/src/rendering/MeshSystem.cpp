@@ -1,5 +1,8 @@
 #include "rendering/MeshSystem.h"
 
+#include "ecs/ComponentTraits.h"
+#include "events/ECSEvents.h"
+
 namespace bge
 {
 
@@ -7,7 +10,13 @@ MeshSystem::MeshSystem()
     : m_EntityToComponentId()
     , m_Meshes()
     , m_Entities()
+    , m_EventCallback()
 {
+}
+
+void MeshSystem::SetEventCallback(const std::function<void(Event&)>& callback)
+{
+  m_EventCallback = callback;
 }
 
 void MeshSystem::RenderMeshes(const Mat4f& projection, const Mat4f& view)
@@ -46,6 +55,9 @@ void MeshSystem::AddComponent(Entity entity, const MeshData& data)
   m_Entities.push_back(entity);
   m_Meshes.push_back(data);
   m_EntityToComponentId[entity.GetId()] = m_Meshes.size() - 1;
+
+  ComponentAddedEvent event(entity, GetUniqueTypeId<MeshData>());
+  m_EventCallback(event);
 }
 
 void MeshSystem::DestroyComponent(Entity entity)
@@ -65,6 +77,9 @@ void MeshSystem::DestroyComponent(Entity entity)
 
   m_EntityToComponentId[lastEntity.GetId()] = componentIndexToRemove;
   m_EntityToComponentId.erase(entity.GetId());
+
+  ComponentRemovedEvent event(entity, GetUniqueTypeId<MeshData>());
+  m_EventCallback(event);
 }
 
 MeshData* MeshSystem::LookUpComponent(Entity entity)

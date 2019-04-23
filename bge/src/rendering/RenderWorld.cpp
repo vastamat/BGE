@@ -14,6 +14,12 @@ RenderWorld::RenderWorld()
   //     Vec4i32(0, window.GetHeight(), window.GetWidth(), 0), -1.0f, 1.0f);
 }
 
+void RenderWorld::SetEventCallback(const std::function<void(Event&)>& callback)
+{
+  m_EventCallback = callback;
+  m_MeshSystem.SetEventCallback(callback);
+}
+
 void RenderWorld::Render(float interpolation)
 {
   RenderDevice::ClearBuffers(true, true);

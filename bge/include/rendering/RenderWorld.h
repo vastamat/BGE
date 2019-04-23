@@ -14,6 +14,8 @@ class RenderWorld
 public:
   RenderWorld();
 
+  void SetEventCallback(const std::function<void(Event&)>& callback);
+
   void Render(float interpolation);
   void OnExit();
 
@@ -37,6 +39,9 @@ private:
 
   // Cameras
   CameraManager m_CameraManager;
+
+  // Event Callback used to fire events to the app
+  std::function<void(Event&)> m_EventCallback;
 };
 
 } // namespace bge
