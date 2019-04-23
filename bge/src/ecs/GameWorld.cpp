@@ -52,6 +52,8 @@ void GameWorld::OnEvent(Event& event)
       BGE_BIND_EVENT_FN(GameWorld::OnAddComponent));
   dispatcher.Dispatch<ComponentRemovedEvent>(
       BGE_BIND_EVENT_FN(GameWorld::OnRemoveComponent));
+  dispatcher.Dispatch<EntitiesDestroyedEvent>(
+      BGE_BIND_EVENT_FN(GameWorld::OnEntitiesDestroyed));
 
   for (auto&& system : m_GameSystems)
   {
@@ -147,6 +149,47 @@ bool GameWorld::OnRemoveComponent(ComponentRemovedEvent& event)
         }
       }
     }
+  }
+
+  return false;
+}
+
+bool GameWorld::OnEntitiesDestroyed(EntitiesDestroyedEvent& event)
+{
+  for (auto&& entity : event.GetEntities())
+  {
+    const auto& entityMask = m_EntityMasks[entity];
+
+    // Go Through all the components the entity has and remove them
+    for (auto&& componentID : entityMask)
+    {
+      // This will break when engine components are in the entity, currently
+      m_GameComponents.RemoveComponentWithId(entity, componentID);
+    }
+
+    // remove the entity from the systems that track it
+    for (auto&& system : m_GameSystems)
+    {
+      auto& registeredEntities = system->GetRegisteredEntities();
+
+      for (size_t i = 0; i < registeredEntities.size(); ++i)
+      {
+        if (registeredEntities[i] == entity)
+        {
+          registeredEntities[i] = registeredEntities.back();
+          registeredEntities.pop_back();
+          break;
+        }
+      }
+    }
+
+    // for (auto&& existingEntity : m_Entities)
+    // {
+    //   if (entity == existingEntity)
+    //   {
+    //     DestroyComponent(entity);
+    //   }
+    // }
   }
 
   return false;

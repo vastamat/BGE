@@ -39,13 +39,6 @@ void RenderWorld::Render(float interpolation)
   }
 }
 
-void RenderWorld::OnExit()
-{
-  m_MeshLibrary.ClearLibrary();
-  m_ShaderLibrary.ClearLibrary();
-  m_TextureLibrary.ClearLibrary();
-}
-
 uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float fov, float near,
                               float far)
 {
@@ -70,6 +63,23 @@ ShaderProgramHandle RenderWorld::LoadShader(const std::string& filepath)
 Texture2DHandle RenderWorld::LoadTexture2D(const std::string& filepath)
 {
   return m_TextureLibrary.GetTexture(filepath);
+}
+
+void RenderWorld::OnEvent(Event& event)
+{
+  EventDispatcher dispatcher(event);
+
+  dispatcher.Dispatch<WindowCloseEvent>(
+      BGE_BIND_EVENT_FN(RenderWorld::OnWindowClose));
+
+  m_MeshSystem.OnEvent(event);
+}
+
+bool RenderWorld::OnWindowClose(WindowCloseEvent& event)
+{
+  m_MeshLibrary.ClearLibrary();
+  m_ShaderLibrary.ClearLibrary();
+  m_TextureLibrary.ClearLibrary();
 }
 
 } // namespace bge

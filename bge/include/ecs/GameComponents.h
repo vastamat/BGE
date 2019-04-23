@@ -22,6 +22,8 @@ public:
   BaseComponentManager& operator=(const BaseComponentManager&) = default;
   BaseComponentManager(BaseComponentManager&&) = default;
   BaseComponentManager& operator=(BaseComponentManager&&) = default;
+
+  virtual void RemoveComponent(Entity entity) = 0;
 };
 
 template <typename ComponentType>
@@ -45,7 +47,7 @@ public:
     return m_Components.back();
   }
 
-  void RemoveComponent(Entity entity)
+  void RemoveComponent(Entity entity) override
   {
     auto componentIndexToRemove = m_EntityIdToComponentIndex[entity.GetId()];
     auto lastComponentIndex = m_Components.size() - 1;
@@ -126,6 +128,15 @@ public:
     m_EventCallback(event);
   }
 
+  FORCEINLINE void RemoveComponentWithId(Entity entity, uint32 componentId)
+  {
+    BaseComponentManager* manager = GetComponentManagerWithId(componentId);
+    manager->RemoveComponent(entity);
+
+    ComponentRemovedEvent event(entity, componentId);
+    m_EventCallback(event);
+  }
+
   template <typename ComponentType>
   FORCEINLINE ComponentType* GetComponent(Entity entity)
   {
@@ -155,6 +166,14 @@ private:
 
     return static_cast<ComponentManager<ComponentType>*>(
         m_ComponentManagers[typeId].get());
+  }
+
+  BaseComponentManager* GetComponentManagerWithId(uint32 componentTypeId)
+  {
+    BGE_CORE_ASSERT(m_ComponentManagers.count(componentTypeId) == 1,
+                    "Component Manager does not exist.");
+
+    return m_ComponentManagers[componentTypeId].get();
   }
 
 private:

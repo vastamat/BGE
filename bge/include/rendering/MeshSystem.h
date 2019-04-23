@@ -4,7 +4,7 @@
 #include "Mesh.h"
 
 #include "ecs/Entity.h"
-#include "events/Event.h"
+#include "events/ECSEvents.h"
 #include "logging/Log.h"
 #include "math/Mat.h"
 
@@ -33,7 +33,11 @@ public:
   void DestroyComponent(Entity entity);
   MeshData* LookUpComponent(Entity entity);
 
+  void OnEvent(Event& event);
+
 private:
+  bool OnEntitiesDestroyed(EntitiesDestroyedEvent& event);
+
   std::unordered_map<uint32, uint32> m_EntityToComponentId;
   std::vector<MeshData> m_Meshes;
   std::vector<Entity> m_Entities;

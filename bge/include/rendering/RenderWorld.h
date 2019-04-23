@@ -6,6 +6,8 @@
 #include "ShaderLibrary.h"
 #include "Texture2DLibrary.h"
 
+#include "events/ApplicationEvents.h"
+
 namespace bge
 {
 
@@ -17,7 +19,6 @@ public:
   void SetEventCallback(const std::function<void(Event&)>& callback);
 
   void Render(float interpolation);
-  void OnExit();
 
   Mesh LoadMesh(const std::string& filepath);
   ShaderProgramHandle LoadShader(const std::string& filepath);
@@ -28,7 +29,11 @@ public:
 
   FORCEINLINE MeshSystem& GetMeshSystem() { return m_MeshSystem; }
 
+  void OnEvent(Event& event);
+
 private:
+  bool OnWindowClose(WindowCloseEvent& event);
+
   // Systems
   MeshSystem m_MeshSystem;
 

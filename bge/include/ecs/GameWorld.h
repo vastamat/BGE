@@ -56,6 +56,7 @@ public:
 private:
   bool OnAddComponent(ComponentAddedEvent& event);
   bool OnRemoveComponent(ComponentRemovedEvent& event);
+  bool OnEntitiesDestroyed(EntitiesDestroyedEvent& event);
 
   std::map<Entity, std::vector<uint32>> m_EntityMasks;
   std::vector<std::unique_ptr<GameSystem>> m_GameSystems;

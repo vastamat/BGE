@@ -89,4 +89,28 @@ MeshData* MeshSystem::LookUpComponent(Entity entity)
   return &m_Meshes[m_EntityToComponentId[entity.GetId()]];
 }
 
+void MeshSystem::OnEvent(Event& event)
+{
+  EventDispatcher dispatcher(event);
+
+  dispatcher.Dispatch<EntitiesDestroyedEvent>(
+      BGE_BIND_EVENT_FN(MeshSystem::OnEntitiesDestroyed));
+}
+
+bool MeshSystem::OnEntitiesDestroyed(EntitiesDestroyedEvent& event)
+{
+  for (auto&& entity : event.GetEntities())
+  {
+    for (auto&& existingEntity : m_Entities)
+    {
+      if (entity == existingEntity)
+      {
+        DestroyComponent(entity);
+      }
+    }
+  }
+
+  return false;
+}
+
 } // namespace bge

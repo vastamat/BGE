@@ -1,5 +1,7 @@
 #include "ecs/World.h"
 
+#include "events/ECSEvents.h"
+
 namespace bge
 {
 
@@ -24,13 +26,19 @@ Entity World::CreateEntity() { return m_EntityManager.CreateEntity(); }
 void World::DestroyEntity(Entity entity)
 {
   m_EntityManager.DestroyEntity(entity);
+  m_DestroyedEntities.push_back(entity);
 }
 
 void World::Update(float deltaTime)
 {
-  // m_gameWorld.Update();
+  m_GameWorld.Tick(deltaTime);
   // m_audioWorld.Update();
   // m_physicsWorld.Update();
+  EntitiesDestroyedEvent event(m_DestroyedEntities);
+
+  // No need to use the event callback which sends the event to the "app layer"
+  // For now, entity deletion only matters for the sub-worlds
+  OnEvent(event);
 }
 
 void World::Render(float interpolation) { m_RenderWorld.Render(interpolation); }
@@ -39,10 +47,8 @@ void World::OnEvent(Event& event)
 {
   EventDispatcher dispatcher(event);
 
-  dispatcher.Dispatch<WindowCloseEvent>(
-      BGE_BIND_EVENT_FN(World::OnWindowClose));
+  m_GameWorld.OnEvent(event);
+  m_RenderWorld.OnEvent(event);
 }
-
-bool World::OnWindowClose(WindowCloseEvent& event) { m_RenderWorld.OnExit(); }
 
 } // namespace bge
