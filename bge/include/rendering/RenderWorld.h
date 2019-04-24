@@ -24,8 +24,12 @@ public:
   ShaderProgramHandle LoadShader(const std::string& filepath);
   Texture2DHandle LoadTexture2D(const std::string& filepath);
 
+  // Perspective Camera
   uint32 AddCamera(const Vec4i32& viewport, float fov, float near, float far);
+  // Orthographic Camera
   uint32 AddCamera(const Vec4i32& viewport, float near, float far);
+  // Set the view matrix of an existing camera
+  void SetView(uint32 cameraId, Mat4f view);
 
   FORCEINLINE MeshSystem& GetMeshSystem() { return m_MeshSystem; }
 

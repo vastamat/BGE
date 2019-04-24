@@ -47,8 +47,8 @@ void World::OnEvent(Event& event)
 {
   EventDispatcher dispatcher(event);
 
-  m_GameWorld.OnEvent(event);
   m_RenderWorld.OnEvent(event);
+  m_GameWorld.OnEvent(event);
 }
 
 } // namespace bge

@@ -55,9 +55,6 @@ void MeshSystem::AddComponent(Entity entity, const MeshData& data)
   m_Entities.push_back(entity);
   m_Meshes.push_back(data);
   m_EntityToComponentId[entity.GetId()] = m_Meshes.size() - 1;
-
-  ComponentAddedEvent event(entity, GetUniqueTypeId<MeshData>());
-  m_EventCallback(event);
 }
 
 void MeshSystem::DestroyComponent(Entity entity)
@@ -77,9 +74,6 @@ void MeshSystem::DestroyComponent(Entity entity)
 
   m_EntityToComponentId[lastEntity.GetId()] = componentIndexToRemove;
   m_EntityToComponentId.erase(entity.GetId());
-
-  ComponentRemovedEvent event(entity, GetUniqueTypeId<MeshData>());
-  m_EventCallback(event);
 }
 
 MeshData* MeshSystem::LookUpComponent(Entity entity)

@@ -2,6 +2,8 @@
 
 #include "Event.h"
 
+#include "ecs/Entity.h"
+
 #include <vector>
 
 namespace bge

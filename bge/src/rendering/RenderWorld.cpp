@@ -50,6 +50,11 @@ uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float near, float far)
   return m_CameraManager.AddOrthographic(viewport, near, far);
 }
 
+void RenderWorld::SetView(uint32 cameraId, Mat4f view)
+{
+  m_CameraManager.SetView(cameraId, std::move(view));
+}
+
 Mesh RenderWorld::LoadMesh(const std::string& filepath)
 {
   return m_MeshLibrary.GetMesh(filepath);

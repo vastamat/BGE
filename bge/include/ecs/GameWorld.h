@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameComponents.h"
-
+#include "ecs/ComponentTraits.h"
 #include "events/ECSEvents.h"
+#include "logging/Log.h"
 
 #include <map>
 #include <memory>
@@ -14,27 +14,15 @@ namespace bge
 class GameSystem
 {
 public:
-  virtual ~GameSystem();
-  DELETE_COPY_AND_ASSIGN(GameSystem)
-
-  void AddComponentType(uint32 typeID);
+  GameSystem() = default;
+  virtual ~GameSystem() = default;
+  GameSystem(const GameSystem&) = default;
+  GameSystem& operator=(const GameSystem&) = default;
+  GameSystem(GameSystem&&) = default;
+  GameSystem& operator=(GameSystem&&) = default;
 
   virtual void Tick(float deltaSeconds) {}
   virtual void OnEvent(Event& event) {}
-
-  FORCEINLINE std::vector<Entity>& GetRegisteredEntities()
-  {
-    return m_RegisteredEntities;
-  }
-
-  FORCEINLINE const std::vector<uint32>& GetComponentTypes() const
-  {
-    return m_ComponentTypes;
-  }
-
-private:
-  std::vector<Entity> m_RegisteredEntities;
-  std::vector<uint32> m_ComponentTypes;
 };
 
 class GameWorld
@@ -42,25 +30,41 @@ class GameWorld
 public:
   void SetEventCallback(const std::function<void(Event&)>& callback);
 
-  void AddGameSystem(std::unique_ptr<GameSystem> system);
+  template <typename T> T* AddGameSystem(std::unique_ptr<T> system)
+  {
+    static_assert(std::is_base_of<GameSystem, T>::value,
+                  "Custom game systems must inherit from GameSystem");
+    m_GameSystems.emplace_back(std::move(system));
+
+    uint32 typeId = GetUniqueTypeId<T>();
+
+    BGE_CORE_ASSERT(typeId >= m_SystemIdToArrayIndex.size(),
+                    "System of this type has already been added.");
+
+    m_SystemIdToArrayIndex.resize(typeId + 1);
+    m_SystemIdToArrayIndex[typeId] = m_GameSystems.size() - 1;
+
+    return static_cast<T*>(m_GameSystems.back().get());
+  }
+
+  template <typename T> T* GetGameSystem()
+  {
+    uint32 typeId = GetUniqueTypeId<T>();
+    BGE_CORE_ASSERT(typeId < m_SystemIdToArrayIndex.size(),
+                    "System type not added to the game world.");
+
+    uint32 arrayIndex = m_SystemIdToArrayIndex[typeId];
+
+    return static_cast<T*>(m_GameSystems[arrayIndex].get());
+  }
 
   void Tick(float deltaSeconds);
 
   void OnEvent(Event& event);
 
-  FORCEINLINE GameComponents& GetGameComponentsContainer()
-  {
-    return m_GameComponents;
-  }
-
 private:
-  bool OnAddComponent(ComponentAddedEvent& event);
-  bool OnRemoveComponent(ComponentRemovedEvent& event);
-  bool OnEntitiesDestroyed(EntitiesDestroyedEvent& event);
-
-  std::map<Entity, std::vector<uint32>> m_EntityMasks;
   std::vector<std::unique_ptr<GameSystem>> m_GameSystems;
-  GameComponents m_GameComponents;
+  std::vector<uint32> m_SystemIdToArrayIndex;
 
   std::function<void(Event&)> m_EventCallback;
 };
