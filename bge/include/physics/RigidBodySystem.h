@@ -21,7 +21,6 @@ public:
   void AddSphereBodyComponent(Entity entity, float mass, float radius);
 
   void DestroyRigidBody(Entity entity);
-  uint32 LookUpBody(Entity entity);
 
   FORCEINLINE const std::vector<Transform>& GetBodyTransforms() const
   {
@@ -33,11 +32,17 @@ public:
 private:
   bool OnEntitiesDestroyed(EntitiesDestroyedEvent& event);
 
+  enum ColliderType
+  {
+    Box,
+    Sphere
+  };
+
 private:
   std::unordered_map<uint32, uint32> m_EntityToComponentId;
-  std::vector<uint32> m_Bodies;
-  std::vector<Transform> m_BodyTransforms;
   std::vector<Entity> m_Entities;
+  std::vector<ColliderType> m_ColliderTypes;
+  std::vector<Transform> m_BodyTransforms;
 };
 
 } // namespace bge
