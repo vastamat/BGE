@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
 
   src/ecs/ComponentTraits.cpp
   src/ecs/EntityManager.cpp
+  src/ecs/GameWorld.cpp
   src/ecs/World.cpp
 
   src/input/UnixInput.cpp
@@ -15,18 +16,17 @@ add_library(${PROJECT_NAME} STATIC
   src/math/AABB.cpp
   src/math/Transform.cpp
 
-  src/physics/BoxSystem.cpp
   src/physics/PhysicsDevice.cpp
   src/physics/PhysicsWorld.cpp
-  src/physics/SphereSystem.cpp
+  src/physics/RigidBodySystem.cpp
 
   src/rendering/CameraManager.cpp
+  src/rendering/DynamicMeshSystem.cpp
   src/rendering/MeshLibrary.cpp
-  src/rendering/MeshSystem.cpp
   src/rendering/OpenGLRenderDevice.cpp
-  src/rendering/PhysicalMeshSystem.cpp
   src/rendering/RenderWorld.cpp
   src/rendering/ShaderLibrary.cpp
+  src/rendering/StaticMeshSystem.cpp
   src/rendering/Texture2DLibrary.cpp
 
   src/scheduler/Scheduler.cpp

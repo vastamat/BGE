@@ -1,44 +1,35 @@
 #include "physics/PhysicsWorld.h"
 
+#include "events/PhysicsEvents.h"
+
 namespace bge
 {
+
+void PhysicsWorld::SetEventCallback(const std::function<void(Event&)>& callback)
+{
+  m_EventCallback = callback;
+}
 
 void PhysicsWorld::Simulate()
 {
   CollidedBodies collisions = PhysicsDevice::Simulate();
 
-  for (size_t i = 0; i < collisions.m_Count; i++)
-  {
-    for (auto&& handler : m_OnCollisionEvents)
-    {
-      handler(collisions.m_Bodies[i].m_BodyA, collisions.m_Bodies[i].m_BodyB);
-    }
-  }
+  m_RigidBodySystem.UpdateTransforms();
+
+  EntitiesCollidedEvent event(collisions);
+  m_EventCallback(event);
 }
 
-Box PhysicsWorld::CreateBox(float mass, float cx, float cy, float cz)
+RigidBody PhysicsWorld::CreateBox(float mass, float cx, float cy, float cz)
 {
   return PhysicsDevice::CreateBox(mass, cx, cy, cz);
 }
 
-Sphere PhysicsWorld::CreateSphere(float mass, float radius)
+RigidBody PhysicsWorld::CreateSphere(float mass, float radius)
 {
   return PhysicsDevice::CreateSphere(mass, radius);
 }
 
-void PhysicsWorld::AddOnCollideEventHandler(const OnCollideCallbackFn& handler)
-{
-  m_OnCollisionEvents.push_back(handler);
-}
-
-template <> BoxSystem* PhysicsWorld::GetComponentSystem<BoxSystem>()
-{
-  return &m_BoxSystem;
-}
-
-template <> SphereSystem* PhysicsWorld::GetComponentSystem<SphereSystem>()
-{
-  return &m_SphereSystem;
-}
+void PhysicsWorld::OnEvent(Event& event) { m_RigidBodySystem.OnEvent(event); }
 
 } // namespace bge

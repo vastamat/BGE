@@ -1,5 +1,7 @@
 #include "ecs/World.h"
 
+#include "events/ECSEvents.h"
+
 namespace bge
 {
 
@@ -7,27 +9,44 @@ World::World()
     : m_EntityManager()
     , m_RenderWorld()
     , m_PhysicsWorld()
+    , m_GameWorld()
+    , m_DestroyedEntities()
+    , m_EventCallback()
 {
 }
 
 World::~World() {}
 
-EntityId World::CreateEntity() { return m_EntityManager.CreateEntity(); }
-
-void World::DestroyEntity(EntityId id) { m_EntityManager.DestroyEntity(id); }
-
-Entity* World::LookUpEntity(EntityId id)
+void World::SetEventCallback(const std::function<void(Event&)>& callback)
 {
-  return m_EntityManager.LookUpEntity(id);
+  m_EventCallback = callback;
+
+  m_RenderWorld.SetEventCallback(callback);
+  m_GameWorld.SetEventCallback(callback);
+  m_PhysicsWorld.SetEventCallback(callback);
+}
+
+Entity World::CreateEntity() { return m_EntityManager.CreateEntity(); }
+
+void World::DestroyEntity(Entity entity)
+{
+  m_EntityManager.DestroyEntity(entity);
+  m_DestroyedEntities.push_back(entity);
 }
 
 void World::Update(float deltaTime)
 {
-  // m_gameWorld.Update();
+  m_GameWorld.Tick(deltaTime);
   // m_audioWorld.Update();
   m_PhysicsWorld.Simulate();
 
-  m_RenderWorld.UpdateTransforms(PhysicsDevice::GetAllBodiesTransforms());
+  m_RenderWorld.GetDynamicMeshSystem().UpdateTransforms(
+      m_PhysicsWorld.GetRigidBodySystem().GetBodyTransforms());
+
+  EntitiesDestroyedEvent event(m_DestroyedEntities);
+  // No need to use the event callback which sends the event to the "app layer"
+  // For now, entity deletion only matters for the sub-worlds
+  OnEvent(event);
 }
 
 void World::Render(float interpolation) { m_RenderWorld.Render(interpolation); }
@@ -36,24 +55,9 @@ void World::OnEvent(Event& event)
 {
   EventDispatcher dispatcher(event);
 
-  dispatcher.Dispatch<WindowCloseEvent>(
-      BGE_BIND_EVENT_FN(World::OnWindowClose));
-}
-
-bool World::OnWindowClose(WindowCloseEvent& event)
-{
-  m_RenderWorld.OnExit();
-  return true;
-}
-
-template <> RenderWorld* World::GetComponentWorld<RenderWorld>()
-{
-  return &m_RenderWorld;
-}
-
-template <> PhysicsWorld* World::GetComponentWorld<PhysicsWorld>()
-{
-  return &m_PhysicsWorld;
+  m_RenderWorld.OnEvent(event);
+  m_PhysicsWorld.OnEvent(event);
+  m_GameWorld.OnEvent(event);
 }
 
 } // namespace bge

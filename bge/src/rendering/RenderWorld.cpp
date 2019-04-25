@@ -14,9 +14,11 @@ RenderWorld::RenderWorld()
   //     Vec4i32(0, window.GetHeight(), window.GetWidth(), 0), -1.0f, 1.0f);
 }
 
-void RenderWorld::UpdateTransforms(TransformsContainer transforms)
+void RenderWorld::SetEventCallback(const std::function<void(Event&)>& callback)
 {
-  m_PhysicalMeshSystem.UpdateTransforms(std::move(transforms));
+  m_EventCallback = callback;
+  m_StaticMeshSystem.SetEventCallback(callback);
+  m_DynamicMeshSystem.SetEventCallback(callback);
 }
 
 void RenderWorld::Render(float interpolation)
@@ -34,16 +36,9 @@ void RenderWorld::Render(float interpolation)
     RenderDevice::SetViewport(viewport[0], viewport[1], viewport[2],
                               viewport[3]);
 
-    m_MeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
-    m_PhysicalMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
+    m_StaticMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
+    m_DynamicMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
   }
-}
-
-void RenderWorld::OnExit()
-{
-  m_MeshLibrary.ClearLibrary();
-  m_ShaderLibrary.ClearLibrary();
-  m_TextureLibrary.ClearLibrary();
 }
 
 uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float fov, float near,
@@ -55,6 +50,11 @@ uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float fov, float near,
 uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float near, float far)
 {
   return m_CameraManager.AddOrthographic(viewport, near, far);
+}
+
+void RenderWorld::SetView(uint32 cameraId, Mat4f view)
+{
+  m_CameraManager.SetView(cameraId, std::move(view));
 }
 
 Mesh RenderWorld::LoadMesh(const std::string& filepath)
@@ -72,15 +72,22 @@ Texture2DHandle RenderWorld::LoadTexture2D(const std::string& filepath)
   return m_TextureLibrary.GetTexture(filepath);
 }
 
-template <> MeshSystem* RenderWorld::GetComponentSystem<MeshSystem>()
+void RenderWorld::OnEvent(Event& event)
 {
-  return &m_MeshSystem;
+  EventDispatcher dispatcher(event);
+
+  dispatcher.Dispatch<WindowCloseEvent>(
+      BGE_BIND_EVENT_FN(RenderWorld::OnWindowClose));
+
+  m_StaticMeshSystem.OnEvent(event);
+  m_DynamicMeshSystem.OnEvent(event);
 }
 
-template <>
-PhysicalMeshSystem* RenderWorld::GetComponentSystem<PhysicalMeshSystem>()
+bool RenderWorld::OnWindowClose(WindowCloseEvent& event)
 {
-  return &m_PhysicalMeshSystem;
+  m_MeshLibrary.ClearLibrary();
+  m_ShaderLibrary.ClearLibrary();
+  m_TextureLibrary.ClearLibrary();
 }
 
 } // namespace bge

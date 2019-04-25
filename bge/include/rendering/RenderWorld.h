@@ -1,11 +1,13 @@
 #pragma once
 
 #include "CameraManager.h"
+#include "DynamicMeshSystem.h"
 #include "MeshLibrary.h"
-#include "MeshSystem.h"
-#include "PhysicalMeshSystem.h"
 #include "ShaderLibrary.h"
+#include "StaticMeshSystem.h"
 #include "Texture2DLibrary.h"
+
+#include "events/ApplicationEvents.h"
 
 namespace bge
 {
@@ -15,41 +17,38 @@ class RenderWorld
 public:
   RenderWorld();
 
-  void UpdateTransforms(TransformsContainer transforms);
+  void SetEventCallback(const std::function<void(Event&)>& callback);
+
   void Render(float interpolation);
-  void OnExit();
 
   Mesh LoadMesh(const std::string& filepath);
   ShaderProgramHandle LoadShader(const std::string& filepath);
   Texture2DHandle LoadTexture2D(const std::string& filepath);
 
+  // Perspective Camera
   uint32 AddCamera(const Vec4i32& viewport, float fov, float near, float far);
+  // Orthographic Camera
   uint32 AddCamera(const Vec4i32& viewport, float near, float far);
+  // Set the view matrix of an existing camera
+  void SetView(uint32 cameraId, Mat4f view);
 
-  template <typename T> void DestroyComponent(ComponentHandle handle)
+  FORCEINLINE StaticMeshSystem& GetStaticMeshSystem()
   {
-    using SystemType = typename ComponentIdToSystem<T>::Type;
-    return GetComponentSystem<SystemType>()->DestroyComponent(handle);
+    return m_StaticMeshSystem;
+  }
+  FORCEINLINE DynamicMeshSystem& GetDynamicMeshSystem()
+  {
+    return m_DynamicMeshSystem;
   }
 
-  template <typename T> ComponentHandle AddComponent(const T& data)
-  {
-    using SystemType = typename ComponentIdToSystem<T>::Type;
-    return GetComponentSystem<SystemType>()->AddComponent(data);
-  }
-
-  template <typename T> T LookUpComponent(ComponentHandle handle)
-  {
-    using SystemType = typename ComponentIdToSystem<T>::Type;
-    return GetComponentSystem<SystemType>()->LookUpComponent(handle);
-  }
-
-  template <typename T> T* GetComponentSystem() { return nullptr; }
+  void OnEvent(Event& event);
 
 private:
+  bool OnWindowClose(WindowCloseEvent& event);
+
   // Systems
-  MeshSystem m_MeshSystem;
-  PhysicalMeshSystem m_PhysicalMeshSystem;
+  StaticMeshSystem m_StaticMeshSystem;
+  DynamicMeshSystem m_DynamicMeshSystem;
 
   // Resource Libraries
   MeshLibrary m_MeshLibrary;
@@ -58,38 +57,9 @@ private:
 
   // Cameras
   CameraManager m_CameraManager;
-};
 
-// helper struct that defines the corresponding world type for each component ID
-// in an inner Type typedef
-template <> struct ComponentIdToWorld<MeshData>
-{
-  using WorldType = RenderWorld;
-  using Type = WorldType;
-};
-
-template <> struct ComponentIdToWorld<PhysicalMeshData>
-{
-  using WorldType = RenderWorld;
-  using Type = WorldType;
-};
-
-// helper struct that defines the corresponding system for each component ID in
-// an inner Type typedef
-template <> struct ComponentIdToSystem<MeshData>
-{
-  using SystemType = MeshSystem;
-  using Type = SystemType;
-};
-
-template <> struct ComponentIdToSystem<PhysicalMeshData>
-{
-  using SystemType = PhysicalMeshSystem;
-  using Type = SystemType;
-};
-
-template <> struct ComponentIdToComponent<ComponentTypeToId<MeshData>::ID>
-{
+  // Event Callback used to fire events to the app
+  std::function<void(Event&)> m_EventCallback;
 };
 
 } // namespace bge

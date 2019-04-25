@@ -2,8 +2,9 @@
 
 #include "ComponentTraits.h"
 #include "EntityManager.h"
+#include "GameWorld.h"
 
-#include "events/ApplicationEvents.h"
+#include "events/Event.h"
 #include "physics/PhysicsWorld.h"
 #include "rendering/RenderWorld.h"
 
@@ -16,48 +17,30 @@ public:
   World();
   ~World();
 
+  void SetEventCallback(const std::function<void(Event&)>& callback);
+
   void Update(float deltaTime);
   void Render(float interpolation);
 
-  EntityId CreateEntity();
-  void DestroyEntity(EntityId id);
-  Entity* LookUpEntity(EntityId id);
+  Entity CreateEntity();
+  void DestroyEntity(Entity entity);
 
   void OnEvent(Event& event);
-  bool OnWindowClose(WindowCloseEvent& event);
 
-  template <typename T>
-  void DestroyComponent(EntityId& entity, ComponentHandle handle)
-  {
-    using WorldType = typename ComponentIdToWorld<T>::Type;
-
-    LookUpEntity(entity)->RemoveComponent<T>();
-    GetComponentWorld<WorldType>()->DestroyComponent(handle);
-  }
-
-  template <typename T>
-  ComponentHandle AddComponent(EntityId& entity, const T& data)
-  {
-    using WorldType = typename ComponentIdToWorld<T>::Type;
-
-    ComponentHandle handle = GetComponentWorld<WorldType>()->AddComponent(data);
-    LookUpEntity(entity)->AddComponent<T>(handle);
-    return handle;
-  }
-
-  template <typename T> T LookUpComponent(ComponentHandle handle)
-  {
-    using WorldType = typename ComponentIdToWorld<T>::Type;
-    return GetComponentWorld<WorldType>()->LookUpComponent(handle);
-  }
-
-  template <typename T> T* GetComponentWorld() { return nullptr; }
+  FORCEINLINE RenderWorld& GetRenderWorld() { return m_RenderWorld; }
+  FORCEINLINE GameWorld& GetGameWorld() { return m_GameWorld; }
+  FORCEINLINE PhysicsWorld& GetPhysicsWorld() { return m_PhysicsWorld; }
 
 private:
   EntityManager m_EntityManager;
 
   RenderWorld m_RenderWorld;
   PhysicsWorld m_PhysicsWorld;
+  GameWorld m_GameWorld;
+
+  std::vector<Entity> m_DestroyedEntities;
+
+  std::function<void(Event&)> m_EventCallback;
 };
 
 } // namespace bge

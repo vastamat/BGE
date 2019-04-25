@@ -263,7 +263,7 @@ uint32 MakeSphereBody(float mass, float radius)
   return body;
 }
 
-Box CreateBox(float mass, float cx, float cy, float cz)
+RigidBody CreateBox(float mass, float cx, float cy, float cz)
 {
   BGE_CORE_ASSERT(s_bodies.count < s_maxBodyCount, "Max count bodies reached");
   BGE_CORE_ASSERT(s_colliders.boxes.count < s_maxBoxCount,
@@ -297,10 +297,10 @@ Box CreateBox(float mass, float cx, float cy, float cz)
   s_colliders.boxes.data[collider].size[2] = cz;
   s_colliders.boxes.tags[collider] = collider;
 
-  return Box{collider, body};
+  return RigidBody{collider, body};
 }
 
-Sphere CreateSphere(float mass, float radius)
+RigidBody CreateSphere(float mass, float radius)
 {
   BGE_CORE_ASSERT(s_bodies.count < s_maxBodyCount, "Max count bodies reached");
   BGE_CORE_ASSERT(s_colliders.spheres.count < s_maxSphereCount,
@@ -328,7 +328,7 @@ Sphere CreateSphere(float mass, float radius)
   s_colliders.spheres.data[collider].radius = radius;
   s_colliders.spheres.tags[collider] = collider + s_maxBoxCount;
 
-  return Sphere{collider, body};
+  return RigidBody{collider, body};
 }
 
 void SetBodyPosition(uint32 bodyId, float position[3])
@@ -389,16 +389,20 @@ void SetSphereColliderBody(uint32 colliderId, uint32 bodyId)
   s_colliders.spheres.transforms[colliderId].body = bodyId;
 }
 
-TransformsContainer GetAllBodiesTransforms()
+void GetBodyTransform(uint32 bodyId, Transform& output)
 {
-  TransformsContainer result;
+  output.SetTranslation(Vec3f(s_bodies.transforms[bodyId].position));
+  output.SetRotation(Quatf(s_bodies.transforms[bodyId].rotation));
+}
 
-  memcpy(result.m_Transforms, s_bodies.transforms,
-         sizeof(nudge::Transform) * s_bodies.count);
+Vec3f GetBoxColliderScale(uint32 boxColliderId)
+{
+  return Vec3f(s_colliders.boxes.data[boxColliderId].size);
+}
 
-  result.m_Count = s_bodies.count;
-
-  return result;
+float GetSphereColliderRadius(uint32 sphereColliderId)
+{
+  return s_colliders.spheres.data[sphereColliderId].radius;
 }
 
 } // namespace PhysicsDevice

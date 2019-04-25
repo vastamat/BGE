@@ -1,19 +1,14 @@
 #pragma once
 
 #include "core/Common.h"
+#include "math/Transform.h"
 
 namespace bge
 {
 
-struct Box
+struct RigidBody
 {
   uint32 m_BoxColliderId;
-  uint32 m_BodyId;
-};
-
-struct Sphere
-{
-  uint32 m_SphereColliderId;
   uint32 m_BodyId;
 };
 
@@ -29,19 +24,6 @@ struct CollidedBodies
   uint32 m_Count;
 };
 
-struct PhysicsBodyTransform
-{
-  float m_Position[3];
-  uint32_t m_Body;
-  float m_Rotation[4];
-};
-
-struct TransformsContainer
-{
-  PhysicsBodyTransform* m_Transforms;
-  uint32 m_Count;
-};
-
 namespace PhysicsDevice
 {
 
@@ -53,8 +35,8 @@ uint32 MakeSphereCollider(float position[3], float radius);
 uint32 MakeBoxBody(float mass, float cx, float cy, float cz);
 uint32 MakeSphereBody(float mass, float radius);
 
-Box CreateBox(float mass, float cx, float cy, float cz);
-Sphere CreateSphere(float mass, float radius);
+RigidBody CreateBox(float mass, float cx, float cy, float cz);
+RigidBody CreateSphere(float mass, float radius);
 
 void SetBodyPosition(uint32 bodyId, float position[3]);
 
@@ -66,7 +48,9 @@ void SetSphereColliderPosition(uint32 colliderId, float position[3]);
 void SetSphereColliderRadius(uint32 colliderId, float radius);
 void SetSphereColliderBody(uint32 colliderId, uint32 bodyId);
 
-TransformsContainer GetAllBodiesTransforms();
+void GetBodyTransform(uint32 bodyId, Transform& output);
+Vec3f GetBoxColliderScale(uint32 boxColliderId);
+float GetSphereColliderRadius(uint32 sphereColliderId);
 
 } // namespace PhysicsDevice
 } // namespace bge
