@@ -16,8 +16,9 @@ class RigidBodySystem
 public:
   void UpdateTransforms();
 
-  void AddBoxBodyComponent(Entity entity, uint32 bodyId, uint32 colliderId);
-  void AddSphereBodyComponent(Entity entity, uint32 bodyId, uint32 colliderId);
+  void AddBoxBodyComponent(Entity entity, float mass, float cx, float cy,
+                           float cz);
+  void AddSphereBodyComponent(Entity entity, float mass, float radius);
 
   void DestroyRigidBody(Entity entity);
   uint32 LookUpBody(Entity entity);

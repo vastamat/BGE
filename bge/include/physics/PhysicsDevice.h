@@ -8,7 +8,7 @@ namespace bge
 
 struct RigidBody
 {
-  uint32 m_BoxColliderId;
+  uint32 m_ColliderId;
   uint32 m_BodyId;
 };
 

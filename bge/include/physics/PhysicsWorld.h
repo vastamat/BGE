@@ -15,9 +15,6 @@ public:
 
   void Simulate();
 
-  RigidBody CreateBox(float mass, float cx, float cy, float cz);
-  RigidBody CreateSphere(float mass, float radius);
-
   FORCEINLINE RigidBodySystem& GetRigidBodySystem()
   {
     return m_RigidBodySystem;

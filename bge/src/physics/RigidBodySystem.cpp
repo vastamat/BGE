@@ -13,34 +13,38 @@ void RigidBodySystem::UpdateTransforms()
   }
 }
 
-void RigidBodySystem::AddBoxBodyComponent(Entity entity, uint32 bodyId,
-                                          uint32 colliderId)
+void RigidBodySystem::AddBoxBodyComponent(Entity entity, float mass, float cx,
+                                          float cy, float cz)
 {
   BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 0,
                   "Component already exists for this entity");
 
+  RigidBody body = PhysicsDevice::CreateBox(mass, cx, cy, cz);
+
   m_Entities.push_back(entity);
-  m_Bodies.push_back(bodyId);
+  m_Bodies.push_back(body.m_BodyId);
 
   m_BodyTransforms.emplace_back();
   m_BodyTransforms.back().SetScale(
-      PhysicsDevice::GetBoxColliderScale(colliderId));
+      PhysicsDevice::GetBoxColliderScale(body.m_ColliderId));
 
   m_EntityToComponentId[entity.GetId()] = m_Bodies.size() - 1;
 }
 
-void RigidBodySystem::AddSphereBodyComponent(Entity entity, uint32 bodyId,
-                                             uint32 colliderId)
+void RigidBodySystem::AddSphereBodyComponent(Entity entity, float mass,
+                                             float radius)
 {
   BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 0,
                   "Component already exists for this entity");
 
+  RigidBody body = PhysicsDevice::CreateSphere(mass, radius);
+
   m_Entities.push_back(entity);
-  m_Bodies.push_back(bodyId);
+  m_Bodies.push_back(body.m_BodyId);
 
   m_BodyTransforms.emplace_back();
   m_BodyTransforms.back().SetScale(
-      Vec3f(PhysicsDevice::GetSphereColliderRadius(colliderId)));
+      Vec3f(PhysicsDevice::GetSphereColliderRadius(body.m_ColliderId)));
 
   m_EntityToComponentId[entity.GetId()] = m_Bodies.size() - 1;
 }

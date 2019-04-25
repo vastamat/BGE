@@ -20,16 +20,6 @@ void PhysicsWorld::Simulate()
   m_EventCallback(event);
 }
 
-RigidBody PhysicsWorld::CreateBox(float mass, float cx, float cy, float cz)
-{
-  return PhysicsDevice::CreateBox(mass, cx, cy, cz);
-}
-
-RigidBody PhysicsWorld::CreateSphere(float mass, float radius)
-{
-  return PhysicsDevice::CreateSphere(mass, radius);
-}
-
 void PhysicsWorld::OnEvent(Event& event) { m_RigidBodySystem.OnEvent(event); }
 
 } // namespace bge
