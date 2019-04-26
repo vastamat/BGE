@@ -20,6 +20,8 @@ private:
 
   uint32 m_TrackedCameraId = 0;
 
+  bge::Vec3f m_Position{0.0f};
+
   float m_Forward = 0.0f;
   float m_Right = 0.0f;
   float m_Up = 0.0f;
