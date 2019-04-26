@@ -10,9 +10,8 @@ namespace bge
 /////////////////////////////////////////////////
 /// Quaternion class which is templated to support a float and double quats.
 /////////////////////////////////////////////////
-template <typename T> class Quat
+template <typename T> struct Quat
 {
-public:
   Quat()
   {
     memset(m_Elements, 0, 4 * sizeof(T));
@@ -499,7 +498,6 @@ public:
 
   // ------------------------------------------------------------------------------
 
-private:
   // [x, y, z, w]
   // [xyz = axes of rotation, w = cosine of amount of rotation]
   T m_Elements[4];

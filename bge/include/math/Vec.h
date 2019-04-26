@@ -15,9 +15,8 @@ namespace bge
 /////////////////////////////////////////////////
 /// Vector class which is templated to support many different types.
 /////////////////////////////////////////////////
-template <typename T, uint32 Size> class Vec
+template <typename T, uint32 Size> struct Vec
 {
-public:
   Vec() { memset(m_Elements, 0, Size * sizeof(T)); }
 
   explicit Vec(T val[Size]) { memcpy(m_Elements, val, Size * sizeof(T)); }

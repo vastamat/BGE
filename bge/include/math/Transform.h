@@ -15,6 +15,8 @@ class Transform
 {
 public:
   Transform();
+  Transform(const Vec3f& translation, const Vec3f& scale,
+            const Quatf& rotation);
 
   // ------------------------------------------------------------------------------
 

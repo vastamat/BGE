@@ -10,9 +10,8 @@ namespace bge
 /////////////////////////////////////////////////
 /// Matrix class which is templated to support a 3x3 and 4x4 matrix.
 /////////////////////////////////////////////////
-template <typename T, uint32 Size> class Mat
+template <typename T, uint32 Size> struct Mat
 {
-public:
   Mat() { memset(m_Elements, 0, Size * Size * sizeof(T)); }
 
   // ------------------------------------------------------------------------------
@@ -230,7 +229,6 @@ public:
 
   // ------------------------------------------------------------------------------
 
-private:
   // [row][col] access = col + row * Size
   T m_Elements[Size * Size];
 };
