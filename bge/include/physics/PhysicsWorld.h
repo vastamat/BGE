@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ColliderSystem.h"
 #include "RigidBodySystem.h"
 
 #include <functional>
@@ -19,11 +20,13 @@ public:
   {
     return m_RigidBodySystem;
   }
+  FORCEINLINE ColliderSystem& GetColliderSystem() { return m_ColliderSystem; }
 
   void OnEvent(Event& event);
 
 private:
   RigidBodySystem m_RigidBodySystem;
+  ColliderSystem m_ColliderSystem;
 
   // Event Callback used to fire events to the app
   std::function<void(Event&)> m_EventCallback;

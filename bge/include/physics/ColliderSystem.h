@@ -11,18 +11,14 @@
 namespace bge
 {
 
-class RigidBodySystem
+class ColliderSystem
 {
 public:
-  void UpdateTransforms();
+  void AddBoxCollider(Entity entity, const Vec3f& position,
+                      const Quatf& rotation, const Vec3f& size);
+  void AddSphereCollider(Entity entity, const Vec3f& position, float radius);
 
-  void AddBoxBodyComponent(Entity entity, float mass, float cx, float cy,
-                           float cz);
-  void AddSphereBodyComponent(Entity entity, float mass, float radius);
-
-  void DestroyRigidBody(Entity entity);
-
-  void SetBodyPosition(Entity entity, const Vec3f& position);
+  void DestroyCollider(Entity entity);
 
   FORCEINLINE const std::vector<Transform>& GetBodyTransforms() const
   {

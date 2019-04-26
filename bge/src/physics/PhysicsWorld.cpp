@@ -20,6 +20,10 @@ void PhysicsWorld::Simulate()
   m_EventCallback(event);
 }
 
-void PhysicsWorld::OnEvent(Event& event) { m_RigidBodySystem.OnEvent(event); }
+void PhysicsWorld::OnEvent(Event& event)
+{
+  m_RigidBodySystem.OnEvent(event);
+  m_ColliderSystem.OnEvent(event);
+}
 
 } // namespace bge

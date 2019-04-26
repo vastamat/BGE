@@ -16,6 +16,7 @@ add_library(${PROJECT_NAME} STATIC
   src/math/AABB.cpp
   src/math/Transform.cpp
 
+  src/physics/ColliderSystem.cpp
   src/physics/PhysicsDevice.cpp
   src/physics/PhysicsWorld.cpp
   src/physics/RigidBodySystem.cpp

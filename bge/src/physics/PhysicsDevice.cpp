@@ -11,8 +11,9 @@ namespace bge
 
 struct RigidBody
 {
-  uint32 m_ColliderId{0};
-  uint32 m_BodyId{0};
+  int32 m_ColliderId{-1};
+  int32 m_BodyId{-1};
+  int32 m_EntityArrayId{-1};
 };
 
 static const uint32 s_MaxBodyCount = 2048;
@@ -132,9 +133,9 @@ CollidedBodies Simulate()
                    connections, temporary);
 
     CollidedBodies collidedBodies;
-    collidedBodies.m_Count = s_ContactData.count;
-    memcpy(collidedBodies.m_Bodies, s_ContactData.bodies,
-           s_ContactData.count * sizeof(s_ContactData.bodies[0]));
+    // collidedBodies.m_Count = s_ContactData.count;
+    // memcpy(collidedBodies.m_Bodies, s_ContactData.bodies,
+    //        s_ContactData.count * sizeof(s_ContactData.bodies[0]));
 
     // NOTE: Custom contacts can be added here, e.g., against the static
     // environment.
@@ -189,44 +190,114 @@ CollidedBodies Simulate()
 
 void SetGravity(float gravity) { s_Gravity = gravity; }
 
-// uint32 MakeBoxCollider(float position[3], float rotation[4], float size[3])
-// {
-//   BGE_CORE_ASSERT(s_Colliders.boxes.count < s_MaxBoxCount,
-//                   "Max count colliders reached");
+void MakeBoxCollider(Entity entity, const Vec3f& position,
+                     const Quatf& rotation, const Vec3f& size)
+{
+  BGE_CORE_ASSERT(s_Colliders.boxes.count < s_MaxBoxCount,
+                  "Max count colliders reached");
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
+                  "This entity already has a rigid body!");
 
-//   uint32 collider = s_Colliders.boxes.count++;
+  uint32 collider = s_Colliders.boxes.count++;
+  s_EntitiesWithBodies.push_back(entity);
 
-//   memcpy(s_Colliders.boxes.transforms[collider].position, position,
-//          sizeof(position[0]) * 3);
+  memcpy(s_Colliders.boxes.transforms[collider].position, position.m_Elements,
+         sizeof(position[0]) * 3);
 
-//   memcpy(s_Colliders.boxes.transforms[collider].rotation, rotation,
-//          sizeof(rotation[0]) * 4);
+  memcpy(s_Colliders.boxes.transforms[collider].rotation, rotation.m_Elements,
+         sizeof(rotation[0]) * 4);
 
-//   memcpy(s_Colliders.boxes.data[collider].size, size, sizeof(size[0]) * 3);
+  memcpy(s_Colliders.boxes.data[collider].size, size.m_Elements,
+         sizeof(size[0]) * 3);
 
-//   s_Colliders.boxes.tags[collider] = collider;
+  s_Colliders.boxes.tags[collider] = collider;
 
-//   return collider;
-// }
+  RigidBody rigidBody{collider, -1, s_EntitiesWithBodies.size() - 1};
+  s_EntityToRigidBody[entity.GetId()] = rigidBody;
+}
 
-// uint32 MakeSphereCollider(float position[3], float radius)
-// {
-//   BGE_CORE_ASSERT(s_Colliders.spheres.count <= s_MaxSphereCount,
-//                   "Max count colliders reached");
+void MakeSphereCollider(Entity entity, const Vec3f& position, float radius)
+{
+  BGE_CORE_ASSERT(s_Colliders.spheres.count <= s_MaxSphereCount,
+                  "Max count colliders reached");
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
+                  "This entity already has a rigid body!");
 
-//   uint32 collider = s_Colliders.spheres.count++;
+  uint32 collider = s_Colliders.spheres.count++;
+  s_EntitiesWithBodies.push_back(entity);
 
-//   s_Colliders.spheres.transforms[collider] = s_IdentityTransform;
+  s_Colliders.spheres.transforms[collider] = s_IdentityTransform;
 
-//   memcpy(s_Colliders.spheres.transforms[collider].position, position,
-//          sizeof(position[0]) * 3);
+  memcpy(s_Colliders.spheres.transforms[collider].position, position.m_Elements,
+         sizeof(position[0]) * 3);
 
-//   s_Colliders.spheres.data[collider].radius = radius;
+  s_Colliders.spheres.data[collider].radius = radius;
 
-//   s_Colliders.spheres.tags[collider] = collider + s_MaxBoxCount;
+  s_Colliders.spheres.tags[collider] = collider + s_MaxBoxCount;
 
-//   return collider;
-// }
+  RigidBody rigidBody{collider, -1, s_EntitiesWithBodies.size() - 1};
+  s_EntityToRigidBody[entity.GetId()] = rigidBody;
+}
+
+void DestroyBoxCollider(Entity entity)
+{
+  Entity lastEntity = s_EntitiesWithBodies.back();
+
+  RigidBody toDestroyRb = s_EntityToRigidBody[entity.GetId()];
+  RigidBody lastEntityRb = s_EntityToRigidBody[lastEntity.GetId()];
+
+  if (lastEntityRb.m_BodyId > -1)
+  {
+    toDestroyRb.m_BodyId = lastEntityRb.m_BodyId;
+  }
+
+  --s_Colliders.boxes.count;
+
+  s_EntitiesWithBodies[toDestroyRb.m_EntityArrayId] = lastEntity;
+  s_EntitiesWithBodies.pop_back();
+
+  s_Colliders.boxes.data[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.data[lastEntityRb.m_ColliderId];
+
+  s_Colliders.boxes.tags[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.tags[lastEntityRb.m_ColliderId];
+
+  s_Colliders.boxes.transforms[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.transforms[lastEntityRb.m_ColliderId];
+
+  s_EntityToRigidBody[lastEntity.GetId()] = toDestroyRb;
+  s_EntityToRigidBody.erase(entity.GetId());
+}
+
+void DestroySphereCollider(Entity entity)
+{
+  Entity lastEntity = s_EntitiesWithBodies.back();
+
+  RigidBody toDestroyRb = s_EntityToRigidBody[entity.GetId()];
+  RigidBody lastEntityRb = s_EntityToRigidBody[lastEntity.GetId()];
+
+  if (lastEntityRb.m_BodyId > -1)
+  {
+    toDestroyRb.m_BodyId = lastEntityRb.m_BodyId;
+  }
+
+  --s_Colliders.spheres.count;
+
+  s_EntitiesWithBodies[toDestroyRb.m_EntityArrayId] = lastEntity;
+  s_EntitiesWithBodies.pop_back();
+
+  s_Colliders.spheres.data[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.data[lastEntityRb.m_ColliderId];
+
+  s_Colliders.spheres.tags[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.tags[lastEntityRb.m_ColliderId];
+
+  s_Colliders.spheres.transforms[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.transforms[lastEntityRb.m_ColliderId];
+
+  s_EntityToRigidBody[lastEntity.GetId()] = toDestroyRb;
+  s_EntityToRigidBody.erase(entity.GetId());
+}
 
 // uint32 MakeBoxBody(float mass, float cx, float cy, float cz)
 // {
@@ -313,7 +384,7 @@ void CreateBox(Entity entity, float mass, float cx, float cy, float cz)
   s_Colliders.boxes.data[collider].size[2] = cz;
   s_Colliders.boxes.tags[collider] = collider;
 
-  RigidBody rigidBody{collider, body};
+  RigidBody rigidBody{collider, body, s_EntitiesWithBodies.size() - 1};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 
@@ -348,65 +419,83 @@ void CreateSphere(Entity entity, float mass, float radius)
   s_Colliders.spheres.data[collider].radius = radius;
   s_Colliders.spheres.tags[collider] = collider + s_MaxBoxCount;
 
-  RigidBody rigidBody{collider, body};
+  RigidBody rigidBody{collider, body, s_EntitiesWithBodies.size() - 1};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 
 void DestroyBox(Entity entity)
 {
-  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+  Entity lastEntity = s_EntitiesWithBodies.back();
 
-  uint32 lastBodyId = --s_Bodies.count;
-  uint32 lastColliderId = --s_Colliders.boxes.count;
-  Entity lastEntity = s_EntitiesWithBodies[lastBodyId];
+  RigidBody toDestroyRb = s_EntityToRigidBody[entity.GetId()];
+  RigidBody lastEntityRb = s_EntityToRigidBody[lastEntity.GetId()];
 
-  s_Bodies.idle_counters[rb.m_BodyId] = s_Bodies.idle_counters[lastBodyId];
-  s_Bodies.momentum[rb.m_BodyId] = s_Bodies.momentum[lastBodyId];
-  s_Bodies.properties[rb.m_BodyId] = s_Bodies.properties[lastBodyId];
-  s_Bodies.transforms[rb.m_BodyId] = s_Bodies.transforms[lastBodyId];
+  --s_Bodies.count;
+  --s_Colliders.boxes.count;
 
-  s_EntitiesWithBodies[rb.m_BodyId] = s_EntitiesWithBodies[lastBodyId];
+  s_Bodies.idle_counters[toDestroyRb.m_BodyId] =
+      s_Bodies.idle_counters[lastEntityRb.m_BodyId];
+
+  s_Bodies.momentum[toDestroyRb.m_BodyId] =
+      s_Bodies.momentum[lastEntityRb.m_BodyId];
+
+  s_Bodies.properties[toDestroyRb.m_BodyId] =
+      s_Bodies.properties[lastEntityRb.m_BodyId];
+
+  s_Bodies.transforms[toDestroyRb.m_BodyId] =
+      s_Bodies.transforms[lastEntityRb.m_BodyId];
+
+  s_EntitiesWithBodies[toDestroyRb.m_EntityArrayId] = lastEntity;
   s_EntitiesWithBodies.pop_back();
 
-  s_Colliders.boxes.data[rb.m_ColliderId] =
-      s_Colliders.boxes.data[lastColliderId];
+  s_Colliders.boxes.data[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.data[lastEntityRb.m_ColliderId];
 
-  s_Colliders.boxes.tags[rb.m_ColliderId] =
-      s_Colliders.boxes.tags[lastColliderId];
+  s_Colliders.boxes.tags[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.tags[lastEntityRb.m_ColliderId];
 
-  s_Colliders.boxes.transforms[rb.m_ColliderId] =
-      s_Colliders.boxes.transforms[lastColliderId];
+  s_Colliders.boxes.transforms[toDestroyRb.m_ColliderId] =
+      s_Colliders.boxes.transforms[lastEntityRb.m_ColliderId];
 
-  s_EntityToRigidBody[lastEntity.GetId()] = rb;
+  s_EntityToRigidBody[lastEntity.GetId()] = toDestroyRb;
   s_EntityToRigidBody.erase(entity.GetId());
 }
 
 void DestroySphere(Entity entity)
 {
-  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+  Entity lastEntity = s_EntitiesWithBodies.back();
 
-  uint32 lastBodyId = --s_Bodies.count;
-  uint32 lastColliderId = --s_Colliders.spheres.count;
-  Entity lastEntity = s_EntitiesWithBodies[lastBodyId];
+  RigidBody toDestroyRb = s_EntityToRigidBody[entity.GetId()];
+  RigidBody lastEntityRb = s_EntityToRigidBody[lastEntity.GetId()];
 
-  s_Bodies.idle_counters[rb.m_BodyId] = s_Bodies.idle_counters[lastBodyId];
-  s_Bodies.momentum[rb.m_BodyId] = s_Bodies.momentum[lastBodyId];
-  s_Bodies.properties[rb.m_BodyId] = s_Bodies.properties[lastBodyId];
-  s_Bodies.transforms[rb.m_BodyId] = s_Bodies.transforms[lastBodyId];
+  --s_Bodies.count;
+  --s_Colliders.spheres.count;
 
-  s_EntitiesWithBodies[rb.m_BodyId] = s_EntitiesWithBodies[lastBodyId];
+  s_Bodies.idle_counters[toDestroyRb.m_BodyId] =
+      s_Bodies.idle_counters[lastEntityRb.m_BodyId];
+
+  s_Bodies.momentum[toDestroyRb.m_BodyId] =
+      s_Bodies.momentum[lastEntityRb.m_BodyId];
+
+  s_Bodies.properties[toDestroyRb.m_BodyId] =
+      s_Bodies.properties[lastEntityRb.m_BodyId];
+
+  s_Bodies.transforms[toDestroyRb.m_BodyId] =
+      s_Bodies.transforms[lastEntityRb.m_BodyId];
+
+  s_EntitiesWithBodies[toDestroyRb.m_EntityArrayId] = lastEntity;
   s_EntitiesWithBodies.pop_back();
 
-  s_Colliders.spheres.data[rb.m_ColliderId] =
-      s_Colliders.spheres.data[lastColliderId];
+  s_Colliders.spheres.data[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.data[lastEntityRb.m_ColliderId];
 
-  s_Colliders.spheres.tags[rb.m_ColliderId] =
-      s_Colliders.spheres.tags[lastColliderId];
+  s_Colliders.spheres.tags[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.tags[lastEntityRb.m_ColliderId];
 
-  s_Colliders.spheres.transforms[rb.m_ColliderId] =
-      s_Colliders.spheres.transforms[lastColliderId];
+  s_Colliders.spheres.transforms[toDestroyRb.m_ColliderId] =
+      s_Colliders.spheres.transforms[lastEntityRb.m_ColliderId];
 
-  s_EntityToRigidBody[lastEntity.GetId()] = rb;
+  s_EntityToRigidBody[lastEntity.GetId()] = toDestroyRb;
   s_EntityToRigidBody.erase(entity.GetId());
 }
 
@@ -421,22 +510,27 @@ void SetBodyPosition(Entity entity, const Vec3f& position)
          sizeof(position[0]) * 3);
 }
 
-// void SetBoxColliderPosition(uint32 colliderId, float position[3])
-// {
-//   BGE_CORE_ASSERT(colliderId < s_Colliders.boxes.count,
-//                   "Invalid box collider Id");
+void SetBoxColliderPosition(Entity entity, const Vec3f& position)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
 
-//   memcpy(s_Colliders.boxes.transforms[colliderId].position, position,
-//          sizeof(position[0]) * 3);
-// }
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
 
-// void SetBoxColliderSize(uint32 colliderId, float size[3])
-// {
-//   BGE_CORE_ASSERT(colliderId < s_Colliders.boxes.count,
-//                   "Invalid box collider Id");
+  memcpy(s_Colliders.boxes.transforms[rb.m_ColliderId].position,
+         position.m_Elements, sizeof(position[0]) * 3);
+}
 
-//   memcpy(s_Colliders.boxes.data[colliderId].size, size, sizeof(size[0]) * 3);
-// }
+void SetBoxColliderSize(Entity entity, const Vec3f& size)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
+
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+
+  memcpy(s_Colliders.boxes.data[rb.m_ColliderId].size, size.m_Elements,
+         sizeof(size[0]) * 3);
+}
 
 // void SetBoxColliderBody(uint32 colliderId, uint32 bodyId)
 // {
@@ -446,22 +540,26 @@ void SetBodyPosition(Entity entity, const Vec3f& position)
 //   s_Colliders.boxes.transforms[colliderId].body = bodyId;
 // }
 
-// void SetSphereColliderPosition(uint32 colliderId, float position[3])
-// {
-//   BGE_CORE_ASSERT(colliderId < s_Colliders.spheres.count,
-//                   "Invalid box collider Id");
+void SetSphereColliderPosition(Entity entity, const Vec3f& position)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
 
-//   memcpy(s_Colliders.spheres.transforms[colliderId].position, position,
-//          sizeof(position[0]) * 3);
-// }
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
 
-// void SetSphereColliderRadius(uint32 colliderId, float radius)
-// {
-//   BGE_CORE_ASSERT(colliderId < s_Colliders.spheres.count,
-//                   "Invalid box collider Id");
+  memcpy(s_Colliders.spheres.transforms[rb.m_ColliderId].position,
+         position.m_Elements, sizeof(position[0]) * 3);
+}
 
-//   s_Colliders.spheres.data[colliderId].radius = radius;
-// }
+void SetSphereColliderRadius(Entity entity, float radius)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
+
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+
+  s_Colliders.spheres.data[rb.m_ColliderId].radius = radius;
+}
 
 // void SetSphereColliderBody(uint32 colliderId, uint32 bodyId)
 // {

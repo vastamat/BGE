@@ -17,6 +17,18 @@ public:
     uint32 cameraId = renderWorld.AddCamera(bge::Vec4i32(0, 0, 1280, 720),
                                             60.0f, 0.1f, 100.0f);
 
+    {
+      // Floor
+      bge::Entity floorEntity = world.CreateEntity();
+      bge::Vec3f position(0.0f, -10.0f, -5.0f);
+      bge::Vec3f size(10.0f, 2.0f, 10.0f);
+      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
+      physicsWorld.GetColliderSystem().AddBoxCollider(floorEntity, position,
+                                                      rotation, size);
+      // physicsWorld.GetColliderSystem().AddSphereCollider(floorEntity,
+      // position, 2.0f);
+    }
+
     bge::Entity entity = world.CreateEntity();
 
     // Add Physics body

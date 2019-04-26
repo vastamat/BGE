@@ -7,6 +7,12 @@
 namespace bge
 {
 
+enum ColliderType
+{
+  Box,
+  Sphere
+};
+
 struct BodyPair
 {
   uint16 m_BodyA{0};
@@ -27,9 +33,13 @@ CollidedBodies Simulate();
 void SetGravity(float gravity);
 
 // TODO: Saved for later
-// uint32 MakeBoxCollider(uint32 entityId, float position[3], float rotation[4],
-//                        float size[3]);
-// uint32 MakeSphereCollider(uint32 entityId, float position[3], float radius);
+void MakeBoxCollider(Entity entity, const Vec3f& position,
+                     const Quatf& rotation, const Vec3f& size);
+void MakeSphereCollider(Entity entity, const Vec3f& position, float radius);
+
+void DestroyBoxCollider(Entity entity);
+void DestroySphereCollider(Entity entity);
+
 // uint32 MakeBoxBody(uint32 entityId, float mass, float cx, float cy, float
 // cz); uint32 MakeSphereBody(uint32 entityId, float mass, float radius);
 
@@ -41,12 +51,12 @@ void DestroySphere(Entity entity);
 
 void SetBodyPosition(Entity entity, const Vec3f& position);
 
-// void SetBoxColliderPosition(uint32 colliderId, float position[3]);
-// void SetBoxColliderSize(uint32 colliderId, float size[3]);
+void SetBoxColliderPosition(Entity entity, const Vec3f& position);
+void SetBoxColliderSize(Entity entity, const Vec3f& size);
 // void SetBoxColliderBody(uint32 colliderId, uint32 bodyId);
 
-// void SetSphereColliderPosition(uint32 colliderId, float position[3]);
-// void SetSphereColliderRadius(uint32 colliderId, float radius);
+void SetSphereColliderPosition(Entity entity, const Vec3f& position);
+void SetSphereColliderRadius(Entity entity, float radius);
 // void SetSphereColliderBody(uint32 colliderId, uint32 bodyId);
 
 void GetBodyTransform(Entity entity, Transform& output);
