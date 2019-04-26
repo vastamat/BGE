@@ -12,6 +12,14 @@ Transform::Transform()
 {
 }
 
+Transform::Transform(const Vec3f& translation, const Vec3f& scale,
+                     const Quatf& rotation)
+    : m_Rotation(rotation)
+    , m_Translation(translation)
+    , m_Scale(scale)
+{
+}
+
 // ------------------------------------------------------------------------------
 
 void Transform::Rotate(const Quatf& amountToRotation)
