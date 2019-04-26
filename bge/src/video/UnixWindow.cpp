@@ -408,6 +408,17 @@ public:
 
     m_WindowData.m_VSync = enabled;
   }
+  void SetCursor(bool enabled)
+  {
+    int mode = GLFW_CURSOR_NORMAL;
+
+    if (!enabled)
+    {
+      mode = GLFW_CURSOR_DISABLED;
+    }
+
+    glfwSetInputMode(m_NativeWindow, GLFW_CURSOR, mode);
+  }
 
   // Getters
   bool IsVSync() const { return m_WindowData.m_VSync; }
@@ -441,6 +452,7 @@ void Window::SetEventCallback(const EventCallbackFn& callback)
   m_impl->SetEventCallback(callback);
 }
 void Window::SetVSync(bool enabled) { m_impl->SetVSync(enabled); }
+void Window::SetCursor(bool enabled) { m_impl->SetCursor(enabled); }
 
 // Getters
 bool Window::IsVSync() const { return m_impl->IsVSync(); }

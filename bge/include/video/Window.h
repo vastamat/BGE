@@ -45,6 +45,7 @@ public:
   // Setters
   void SetEventCallback(const EventCallbackFn& callback);
   void SetVSync(bool enabled);
+  void SetCursor(bool enabled);
 
   // Getters
   bool IsVSync() const;
