@@ -80,6 +80,14 @@ void RigidBodySystem::DestroyRigidBody(Entity entity)
   m_EntityToComponentId.erase(entity.GetId());
 }
 
+void RigidBodySystem::SetBodyPosition(Entity entity, const Vec3f& position)
+{
+  BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 1,
+                  "Component does not exist for this entity");
+
+  PhysicsDevice::SetBodyPosition(entity, position);
+}
+
 // uint32 RigidBodySystem::LookUpBody(Entity entity)
 // {
 //   BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 1,

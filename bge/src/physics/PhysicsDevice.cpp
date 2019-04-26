@@ -22,6 +22,7 @@ static const uint32 s_Steps = 2;
 static const uint32 s_Iterations = 20;
 static const float s_TimeStep = 1.0f / (60.0f * (float)s_Steps);
 static const float s_Damping = 1.0f - s_TimeStep * 0.25f;
+static float s_Gravity = 9.82f;
 
 static nudge::Arena s_Arena;
 static nudge::BodyData s_Bodies;
@@ -143,7 +144,7 @@ CollidedBodies Simulate()
     {
       uint32 index = s_ActiveBodies.indices[i];
 
-      s_Bodies.momentum[index].velocity[1] -= 9.82f * s_TimeStep;
+      s_Bodies.momentum[index].velocity[1] -= s_Gravity * s_TimeStep;
 
       s_Bodies.momentum[index].velocity[0] *= s_Damping;
       s_Bodies.momentum[index].velocity[1] *= s_Damping;
@@ -185,6 +186,8 @@ CollidedBodies Simulate()
     return collidedBodies;
   }
 }
+
+void SetGravity(float gravity) { s_Gravity = gravity; }
 
 // uint32 MakeBoxCollider(float position[3], float rotation[4], float size[3])
 // {
@@ -407,13 +410,16 @@ void DestroySphere(Entity entity)
   s_EntityToRigidBody.erase(entity.GetId());
 }
 
-// void SetBodyPosition(uint32 bodyId, float position[3])
-// {
-//   BGE_CORE_ASSERT(bodyId < s_Bodies.count, "Invalid body Id");
+void SetBodyPosition(Entity entity, const Vec3f& position)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
 
-//   memcpy(s_Bodies.transforms[bodyId].position, position,
-//          sizeof(position[0]) * 3);
-// }
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+
+  memcpy(s_Bodies.transforms[rb.m_BodyId].position, position.m_Elements,
+         sizeof(position[0]) * 3);
+}
 
 // void SetBoxColliderPosition(uint32 colliderId, float position[3])
 // {

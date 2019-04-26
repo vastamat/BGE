@@ -12,23 +12,30 @@ public:
     auto& world = GetWorld();
     bge::RenderWorld& renderWorld = world.GetRenderWorld();
     bge::GameWorld& gameWorld = world.GetGameWorld();
+    bge::PhysicsWorld& physicsWorld = world.GetPhysicsWorld();
 
     uint32 cameraId = renderWorld.AddCamera(bge::Vec4i32(0, 0, 1280, 720),
                                             60.0f, 0.1f, 100.0f);
 
     bge::Entity entity = world.CreateEntity();
 
-    bge::Transform transform;
-    transform.Translate(bge::Vec3f(0.0f, 0.0f, -5.0f));
-    bge::StaticMeshData meshCompData;
+    // Add Physics body
+    physicsWorld.GetRigidBodySystem().AddBoxBodyComponent(entity, 1.0f, 1.0f,
+                                                          1.0f, 1.0f);
+    physicsWorld.GetRigidBodySystem().SetBodyPosition(
+        entity, bge::Vec3f(0.0f, 0.0f, -5.0f));
+
+    // Add the dynamic mesh
+    // bge::Transform transform;
+    // transform.Translate(bge::Vec3f(0.0f, 0.0f, -5.0f));
+    bge::DynamicMeshData meshCompData;
     meshCompData.m_Mesh = renderWorld.LoadMesh("res/models/cube.obj");
-    meshCompData.m_Transform = transform.ToMatrix();
     meshCompData.m_Material.m_Shader =
         renderWorld.LoadShader("res/shaders/basic");
     meshCompData.m_Material.m_Textures.push_back(
         renderWorld.LoadTexture2D("res/textures/bricks.jpg"));
 
-    renderWorld.GetStaticMeshSystem().AddComponent(entity, meshCompData);
+    renderWorld.GetDynamicMeshSystem().AddComponent(entity, meshCompData);
 
     std::unique_ptr<CameraControlSystem> cameraControlSystem =
         std::make_unique<CameraControlSystem>(cameraId);

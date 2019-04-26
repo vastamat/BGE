@@ -24,6 +24,7 @@ namespace PhysicsDevice
 
 void Initialize();
 CollidedBodies Simulate();
+void SetGravity(float gravity);
 
 // TODO: Saved for later
 // uint32 MakeBoxCollider(uint32 entityId, float position[3], float rotation[4],
@@ -38,7 +39,7 @@ void CreateSphere(Entity entity, float mass, float radius);
 void DestroyBox(Entity entity);
 void DestroySphere(Entity entity);
 
-// void SetBodyPosition(uint32 bodyId, float position[3]);
+void SetBodyPosition(Entity entity, const Vec3f& position);
 
 // void SetBoxColliderPosition(uint32 colliderId, float position[3]);
 // void SetBoxColliderSize(uint32 colliderId, float size[3]);

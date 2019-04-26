@@ -22,6 +22,8 @@ public:
 
   void DestroyRigidBody(Entity entity);
 
+  void SetBodyPosition(Entity entity, const Vec3f& position);
+
   FORCEINLINE const std::vector<Transform>& GetBodyTransforms() const
   {
     return m_BodyTransforms;

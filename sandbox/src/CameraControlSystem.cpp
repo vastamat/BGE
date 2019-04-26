@@ -36,20 +36,20 @@ void CameraControlSystem::Tick(float deltaSeconds)
 
   if (bge::Input::IsKeyPressed(bge::KeyCode::W))
   {
-    m_Forward += 10.0f;
+    m_Forward += 50.0f;
   }
   if (bge::Input::IsKeyPressed(bge::KeyCode::S))
   {
-    m_Forward -= 10.0f;
+    m_Forward -= 50.0f;
   }
 
   if (bge::Input::IsKeyPressed(bge::KeyCode::A))
   {
-    m_Right -= 10.0f;
+    m_Right -= 50.0f;
   }
   if (bge::Input::IsKeyPressed(bge::KeyCode::D))
   {
-    m_Right += 10.0f;
+    m_Right += 50.0f;
   }
 
   if (bge::Input::IsKeyPressed(bge::KeyCode::Q))

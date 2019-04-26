@@ -25,29 +25,33 @@ void DynamicMeshSystem::UpdateTransforms(
 
 void DynamicMeshSystem::RenderMeshes(const Mat4f& projection, const Mat4f& view)
 {
-  for (size_t i = 0; i < m_Meshes.size(); ++i)
+  for (size_t meshIndex = 0; meshIndex < m_Meshes.size(); ++meshIndex)
   {
-    RenderDevice::BindShaderProgram(m_Meshes[i].m_Material.m_Shader);
+    RenderDevice::BindShaderProgram(m_Meshes[meshIndex].m_Material.m_Shader);
 
-    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader,
+    RenderDevice::SetUniformMat4(m_Meshes[meshIndex].m_Material.m_Shader,
                                  "in_Projection", projection);
-    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader, "in_View",
-                                 view);
-    RenderDevice::SetUniformMat4(m_Meshes[i].m_Material.m_Shader, "in_Model",
-                                 m_Transforms[i]);
+    RenderDevice::SetUniformMat4(m_Meshes[meshIndex].m_Material.m_Shader,
+                                 "in_View", view);
+    RenderDevice::SetUniformMat4(m_Meshes[meshIndex].m_Material.m_Shader,
+                                 "in_Model", m_Transforms[meshIndex]);
 
-    for (size_t i = 0; i < m_Meshes[i].m_Material.m_Textures.size(); i++)
+    for (size_t textureId = 0;
+         textureId < m_Meshes[meshIndex].m_Material.m_Textures.size();
+         ++textureId)
     {
-      RenderDevice::BindTexture2D(m_Meshes[i].m_Material.m_Textures[i], i);
+      RenderDevice::BindTexture2D(
+          m_Meshes[meshIndex].m_Material.m_Textures[textureId], textureId);
     }
 
-    RenderDevice::Draw(m_Meshes[i].m_Mesh.m_VertexArray,
-                       m_Meshes[i].m_Mesh.m_IndexBuffer,
-                       m_Meshes[i].m_Mesh.m_IndicesCount);
+    RenderDevice::Draw(m_Meshes[meshIndex].m_Mesh.m_VertexArray,
+                       m_Meshes[meshIndex].m_Mesh.m_IndexBuffer,
+                       m_Meshes[meshIndex].m_Mesh.m_IndicesCount);
 
-    for (int i = m_Meshes[i].m_Material.m_Textures.size() - 1; i >= 0; i--)
+    for (int textureId = m_Meshes[meshIndex].m_Material.m_Textures.size() - 1;
+         textureId >= 0; --textureId)
     {
-      RenderDevice::UnbindTexture2D(i);
+      RenderDevice::UnbindTexture2D(textureId);
     }
   }
 }
