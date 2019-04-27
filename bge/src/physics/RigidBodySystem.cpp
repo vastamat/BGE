@@ -88,6 +88,21 @@ void RigidBodySystem::SetBodyPosition(Entity entity, const Vec3f& position)
   PhysicsDevice::SetBodyPosition(entity, position);
 }
 
+void RigidBodySystem::SetBodyVelocity(Entity entity, const Vec3f& velocity)
+{
+  BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 1,
+                  "Component does not exist for this entity");
+
+  PhysicsDevice::SetBodyVelocity(entity, velocity);
+}
+void RigidBodySystem::AddBodyVelocity(Entity entity, const Vec3f& amountToAdd)
+{
+  BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 1,
+                  "Component does not exist for this entity");
+
+  PhysicsDevice::AddBodyVelocity(entity, amountToAdd);
+}
+
 // uint32 RigidBodySystem::LookUpBody(Entity entity)
 // {
 //   BGE_CORE_ASSERT(m_EntityToComponentId.count(entity.GetId()) == 1,

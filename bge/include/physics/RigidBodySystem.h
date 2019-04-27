@@ -23,6 +23,8 @@ public:
   void DestroyRigidBody(Entity entity);
 
   void SetBodyPosition(Entity entity, const Vec3f& position);
+  void SetBodyVelocity(Entity entity, const Vec3f& velocity);
+  void AddBodyVelocity(Entity entity, const Vec3f& amountToAdd);
 
   FORCEINLINE const std::vector<Transform>& GetBodyTransforms() const
   {

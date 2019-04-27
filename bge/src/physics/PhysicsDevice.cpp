@@ -577,6 +577,29 @@ void SetBodyPosition(Entity entity, const Vec3f& position)
          sizeof(position[0]) * 3);
 }
 
+void SetBodyVelocity(Entity entity, const Vec3f& velocity)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
+
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+
+  memcpy(s_Bodies.momentum[rb.m_BodyId].velocity, velocity.m_Elements,
+         sizeof(velocity[0]) * 3);
+}
+
+void AddBodyVelocity(Entity entity, const Vec3f& amountToAdd)
+{
+  BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),
+                  "Entity not registered with a body.");
+
+  RigidBody rb = s_EntityToRigidBody[entity.GetId()];
+
+  s_Bodies.momentum[rb.m_BodyId].velocity[0] += amountToAdd[0];
+  s_Bodies.momentum[rb.m_BodyId].velocity[1] += amountToAdd[1];
+  s_Bodies.momentum[rb.m_BodyId].velocity[2] += amountToAdd[2];
+}
+
 void SetBoxColliderPosition(Entity entity, const Vec3f& position)
 {
   BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()),

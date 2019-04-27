@@ -32,7 +32,6 @@ void Initialize();
 CollidedBodies Simulate();
 void SetGravity(float gravity);
 
-// TODO: Saved for later
 void MakeBoxCollider(Entity entity, const Vec3f& position,
                      const Quatf& rotation, const Vec3f& size);
 void MakeSphereCollider(Entity entity, const Vec3f& position, float radius);
@@ -50,6 +49,8 @@ void DestroyBox(Entity entity);
 void DestroySphere(Entity entity);
 
 void SetBodyPosition(Entity entity, const Vec3f& position);
+void SetBodyVelocity(Entity entity, const Vec3f& velocity);
+void AddBodyVelocity(Entity entity, const Vec3f& amountToAdd);
 
 void SetBoxColliderPosition(Entity entity, const Vec3f& position);
 void SetBoxColliderSize(Entity entity, const Vec3f& size);
