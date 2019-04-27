@@ -38,6 +38,70 @@ static std::vector<Entity> s_EntitiesWithBodies;
 static const nudge::Transform s_IdentityTransform = {
     {}, 0, {0.0f, 0.0f, 0.0f, 1.0f}};
 
+static inline void QuaternionConcat(float r[4], const float a[4],
+                                    const float b[4])
+{
+  r[0] = b[0] * a[3] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1];
+  r[1] = b[1] * a[3] + a[1] * b[3] + a[2] * b[0] - a[0] * b[2];
+  r[2] = b[2] * a[3] + a[2] * b[3] + a[0] * b[1] - a[1] * b[0];
+  r[3] = a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2];
+}
+
+static inline void QuaternionTransform(float r[3], const float a[4],
+                                       const float b[3])
+{
+  float t[3];
+  t[0] = a[1] * b[2] - a[2] * b[1];
+  t[1] = a[2] * b[0] - a[0] * b[2];
+  t[2] = a[0] * b[1] - a[1] * b[0];
+
+  t[0] += t[0];
+  t[1] += t[1];
+  t[2] += t[2];
+
+  r[0] = b[0] + a[3] * t[0] + a[1] * t[2] - a[2] * t[1];
+  r[1] = b[1] + a[3] * t[1] + a[2] * t[0] - a[0] * t[2];
+  r[2] = b[2] + a[3] * t[2] + a[0] * t[1] - a[1] * t[0];
+}
+
+static inline void MakeMatrix(float r[16], const float s[3], const float q[4],
+                              const float t[3])
+{
+  float kx = q[0] + q[0];
+  float ky = q[1] + q[1];
+  float kz = q[2] + q[2];
+
+  float xx = kx * q[0];
+  float yy = ky * q[1];
+  float zz = kz * q[2];
+  float xy = kx * q[1];
+  float xz = kx * q[2];
+  float yz = ky * q[2];
+  float sx = kx * q[3];
+  float sy = ky * q[3];
+  float sz = kz * q[3];
+
+  r[0] = (1.0f - yy - zz) * s[0];
+  r[1] = (xy + sz) * s[0];
+  r[2] = (xz - sy) * s[0];
+  r[3] = 0.0f;
+
+  r[4] = (xy - sz) * s[1];
+  r[5] = (1.0f - xx - zz) * s[1];
+  r[6] = (yz + sx) * s[1];
+  r[7] = 0.0f;
+
+  r[8] = (xz + sy) * s[2];
+  r[9] = (yz - sx) * s[2];
+  r[10] = (1.0f - xx - yy) * s[2];
+  r[11] = 0.0f;
+
+  r[12] = t[0];
+  r[13] = t[1];
+  r[14] = t[2];
+  r[15] = 1.0f;
+}
+
 namespace PhysicsDevice
 {
 
@@ -110,6 +174,7 @@ void Initialize()
       _mm_malloc(sizeof(uint64_t) * s_ContactCache.capacity, 64));
 
   // The first body is the static world.
+  // colliders without a rigid body will have their body reference be the world
   s_Bodies.count = 1;
   s_Bodies.idle_counters[0] = 0;
   s_Bodies.transforms[0] = s_IdentityTransform;
@@ -200,6 +265,8 @@ void MakeBoxCollider(Entity entity, const Vec3f& position,
 
   uint32 collider = s_Colliders.boxes.count++;
   s_EntitiesWithBodies.push_back(entity);
+
+  s_Colliders.boxes.transforms[collider] = s_IdentityTransform;
 
   memcpy(s_Colliders.boxes.transforms[collider].position, position.m_Elements,
          sizeof(position[0]) * 3);
@@ -597,6 +664,70 @@ float GetSphereColliderRadius(Entity entity)
   RigidBody rb = s_EntityToRigidBody[entity.GetId()];
 
   return s_Colliders.spheres.data[rb.m_ColliderId].radius;
+}
+
+std::vector<Mat4f> GetAllBoxColliderTransforms()
+{
+  std::vector<Mat4f> matrices;
+  matrices.reserve(s_Colliders.boxes.count);
+
+  for (uint32 i = 0; i < s_Colliders.boxes.count; ++i)
+  {
+    uint32 body = s_Colliders.boxes.transforms[i].body;
+
+    float scale[3];
+    float rotation[4];
+    float position[3];
+
+    memcpy(scale, s_Colliders.boxes.data[i].size, sizeof(scale));
+
+    QuaternionConcat(rotation, s_Bodies.transforms[body].rotation,
+                     s_Colliders.boxes.transforms[i].rotation);
+    QuaternionTransform(position, s_Bodies.transforms[body].rotation,
+                        s_Colliders.boxes.transforms[i].position);
+
+    position[0] += s_Bodies.transforms[body].position[0];
+    position[1] += s_Bodies.transforms[body].position[1];
+    position[2] += s_Bodies.transforms[body].position[2];
+
+    float m[16];
+    MakeMatrix(m, scale, rotation, position);
+    matrices.emplace_back(m);
+  }
+
+  return matrices;
+}
+
+std::vector<Mat4f> GetAllSphereColliderTransforms()
+{
+  std::vector<Mat4f> matrices;
+  matrices.reserve(s_Colliders.spheres.count);
+
+  for (uint32 i = 0; i < s_Colliders.spheres.count; ++i)
+  {
+    uint32 body = s_Colliders.spheres.transforms[i].body;
+
+    float scale[3];
+    float rotation[4];
+    float position[3];
+
+    scale[0] = scale[1] = scale[2] = s_Colliders.spheres.data[i].radius;
+
+    QuaternionConcat(rotation, s_Bodies.transforms[body].rotation,
+                     s_Colliders.spheres.transforms[i].rotation);
+    QuaternionTransform(position, s_Bodies.transforms[body].rotation,
+                        s_Colliders.spheres.transforms[i].position);
+
+    position[0] += s_Bodies.transforms[body].position[0];
+    position[1] += s_Bodies.transforms[body].position[1];
+    position[2] += s_Bodies.transforms[body].position[2];
+
+    float m[16];
+    MakeMatrix(m, scale, rotation, position);
+    matrices.emplace_back(m);
+  }
+
+  return matrices;
 }
 
 } // namespace PhysicsDevice

@@ -63,5 +63,8 @@ void GetBodyTransform(Entity entity, Transform& output);
 Vec3f GetBoxColliderScale(Entity entity);
 float GetSphereColliderRadius(Entity entity);
 
+std::vector<Mat4f> GetAllBoxColliderTransforms();
+std::vector<Mat4f> GetAllSphereColliderTransforms();
+
 } // namespace PhysicsDevice
 } // namespace bge

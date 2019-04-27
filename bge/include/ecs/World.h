@@ -15,7 +15,8 @@ class World
 {
 public:
   World();
-  ~World();
+
+  void Init();
 
   void SetEventCallback(const std::function<void(Event&)>& callback);
 

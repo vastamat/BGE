@@ -29,6 +29,8 @@ add_library(${PROJECT_NAME} STATIC
   src/rendering/ShaderLibrary.cpp
   src/rendering/StaticMeshSystem.cpp
   src/rendering/Texture2DLibrary.cpp
+  src/rendering/WireframeBoxRenderer.cpp
+  src/rendering/WireframeSphereRenderer.cpp
 
   src/scheduler/Scheduler.cpp
   src/scheduler/Task.cpp

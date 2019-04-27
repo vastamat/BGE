@@ -7,11 +7,24 @@ namespace bge
 
 RenderWorld::RenderWorld()
 {
+
   // BUG: Gets initialized before window is created
   // Window& window = Application::Get().GetWindow();
   // // Screen camera uses "window" coordinate origin, being top-left
   // m_ScreenCamera.SetOrthographic(
   //     Vec4i32(0, window.GetHeight(), window.GetWidth(), 0), -1.0f, 1.0f);
+}
+
+void RenderWorld::Init()
+{
+  m_WireframeBoxRenderer.SetMesh(m_MeshLibrary.GetMesh("res/models/cube.obj"));
+  m_WireframeBoxRenderer.SetShader(
+      m_ShaderLibrary.GetShader("res/shaders/wireframe"));
+
+  m_WireframeSphereRenderer.SetMesh(
+      m_MeshLibrary.GetMesh("res/models/sphere.obj"));
+  m_WireframeSphereRenderer.SetShader(
+      m_ShaderLibrary.GetShader("res/shaders/wireframe"));
 }
 
 void RenderWorld::SetEventCallback(const std::function<void(Event&)>& callback)
@@ -38,6 +51,8 @@ void RenderWorld::Render(float interpolation)
 
     m_StaticMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
     m_DynamicMeshSystem.RenderMeshes(projectionMats[i], viewMats[i]);
+    m_WireframeBoxRenderer.RenderWireframes(projectionMats[i], viewMats[i]);
+    m_WireframeSphereRenderer.RenderWireframes(projectionMats[i], viewMats[i]);
   }
 }
 

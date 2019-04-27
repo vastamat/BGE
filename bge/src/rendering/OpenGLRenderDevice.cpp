@@ -519,10 +519,10 @@ void SetUniform4f(ShaderProgramHandle handle, const std::string& name,
                      vector[2], vector[3]));
 }
 void SetUniformMat4(ShaderProgramHandle handle, const std::string& name,
-                    Mat4f matrix)
+                    Mat4f matrix, bool transpose)
 {
   // Transpose flag is set to GL_TRUE, because the matrix class is row-major
-  GLCall(glUniformMatrix4fv(GetUniformLocation(handle, name), 1, GL_TRUE,
+  GLCall(glUniformMatrix4fv(GetUniformLocation(handle, name), 1, transpose,
                             &matrix[0]));
 }
 
@@ -599,6 +599,11 @@ void Draw(VertexArrayHandle vao, IndexBufferHandle ibo, uint32 indicesCount)
   BindVertexArray(vao);
   BindIndexBuffer(ibo);
   GLCall(glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, nullptr));
+}
+
+void DrawWireframeLines(uint32 indicesCount)
+{
+  GLCall(glDrawElements(GL_LINE_STRIP, indicesCount, GL_UNSIGNED_INT, nullptr));
 }
 
 static GLuint AddShader(GLuint shaderProgram, const char* src, GLenum type)

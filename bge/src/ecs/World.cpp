@@ -15,7 +15,7 @@ World::World()
 {
 }
 
-World::~World() {}
+void World::Init() { m_RenderWorld.Init(); }
 
 void World::SetEventCallback(const std::function<void(Event&)>& callback)
 {

@@ -28,6 +28,8 @@ Application::Application()
   Scheduler::Initialize();
   RenderDevice::Initialize();
   PhysicsDevice::Initialize();
+
+  m_World.Init();
 }
 
 Application::~Application()

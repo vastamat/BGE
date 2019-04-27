@@ -126,7 +126,7 @@ void SetUniform3f(ShaderProgramHandle handle, const std::string& name,
 void SetUniform4f(ShaderProgramHandle handle, const std::string& name,
                   const Vec4f& vector);
 void SetUniformMat4(ShaderProgramHandle handle, const std::string& name,
-                    Mat4f matrix);
+                    Mat4f matrix, bool transpose = true);
 
 Texture2DHandle CreateTexture2D(uint32 width, uint32 height, uint8* data,
                                 TextureParameters parameters);
@@ -136,6 +136,7 @@ void BindTexture2D(Texture2DHandle handle, uint32 slot);
 void UnbindTexture2D(uint32 slot);
 
 void Draw(VertexArrayHandle vao, IndexBufferHandle ibo, uint32 indicesCount);
+void DrawWireframeLines(uint32 indicesCount);
 
 } // namespace RenderDevice
 } // namespace bge

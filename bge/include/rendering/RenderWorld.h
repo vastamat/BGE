@@ -6,6 +6,8 @@
 #include "ShaderLibrary.h"
 #include "StaticMeshSystem.h"
 #include "Texture2DLibrary.h"
+#include "WireframeBoxRenderer.h"
+#include "WireframeSphereRenderer.h"
 
 #include "events/ApplicationEvents.h"
 
@@ -16,6 +18,8 @@ class RenderWorld
 {
 public:
   RenderWorld();
+
+  void Init();
 
   void SetEventCallback(const std::function<void(Event&)>& callback);
 
@@ -49,6 +53,8 @@ private:
   // Systems
   StaticMeshSystem m_StaticMeshSystem;
   DynamicMeshSystem m_DynamicMeshSystem;
+  WireframeBoxRenderer m_WireframeBoxRenderer;
+  WireframeSphereRenderer m_WireframeSphereRenderer;
 
   // Resource Libraries
   MeshLibrary m_MeshLibrary;
