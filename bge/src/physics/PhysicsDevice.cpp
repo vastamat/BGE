@@ -16,13 +16,13 @@ struct RigidBody
   int32 m_EntityArrayId{-1};
 };
 
-static const uint32 s_MaxBodyCount = 2048;
-static const uint32 s_MaxBoxCount = 2048;
-static const uint32 s_MaxSphereCount = 2048;
-static const uint32 s_Steps = 2;
-static const uint32 s_Iterations = 20;
-static const float s_TimeStep = 1.0f / (60.0f * (float)s_Steps);
-static const float s_Damping = 1.0f - s_TimeStep * 0.25f;
+static constexpr uint32 s_MaxBodyCount = 2048;
+static constexpr uint32 s_MaxBoxCount = 2048;
+static constexpr uint32 s_MaxSphereCount = 2048;
+static constexpr uint32 s_Steps = 2;
+static constexpr uint32 s_Iterations = 20;
+static constexpr float s_TimeStep = 1.0f / (25.0f * (float)s_Steps);
+static constexpr float s_Damping = 1.0f - s_TimeStep * 0.25f;
 static float s_Gravity = 9.82f;
 
 static nudge::Arena s_Arena;
@@ -35,7 +35,7 @@ static nudge::ActiveBodies s_ActiveBodies;
 static std::unordered_map<uint32, RigidBody> s_EntityToRigidBody;
 static std::vector<Entity> s_EntitiesWithBodies;
 
-static const nudge::Transform s_IdentityTransform = {
+static constexpr nudge::Transform s_IdentityTransform = {
     {}, 0, {0.0f, 0.0f, 0.0f, 1.0f}};
 
 static inline void QuaternionConcat(float r[4], const float a[4],
