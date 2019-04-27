@@ -2,6 +2,7 @@
 #include <logging/Log.h>
 #include <math/Transform.h>
 
+#include "BallControlSystem.h"
 #include "CameraControlSystem.h"
 
 class Sandbox : public bge::Application
@@ -101,7 +102,10 @@ public:
 
     std::unique_ptr<CameraControlSystem> cameraControlSystem =
         std::make_unique<CameraControlSystem>(cameraId);
+    std::unique_ptr<BallControlSystem> ballControlSystem =
+        std::make_unique<BallControlSystem>(entity, 10.0f);
     gameWorld.AddGameSystem(std::move(cameraControlSystem));
+    gameWorld.AddGameSystem(std::move(ballControlSystem));
   }
 
   ~Sandbox() {}

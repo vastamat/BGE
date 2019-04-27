@@ -78,6 +78,8 @@ bool CameraControlSystem::OnKeyPressEvent(bge::KeyPressedEvent& event)
   {
     m_Up = bge::Clamp(m_Up - 1.0f, -1.0f, 1.0f);
   }
+
+  return false;
 }
 bool CameraControlSystem::OnKeyReleaseEvent(bge::KeyReleasedEvent& event)
 {
@@ -109,6 +111,7 @@ bool CameraControlSystem::OnKeyReleaseEvent(bge::KeyReleasedEvent& event)
   {
     m_Up = bge::Clamp(m_Up + 1.0f, -1.0f, 1.0f);
   }
+  return false;
 }
 bool CameraControlSystem::OnMouseMoveEvent(bge::MouseMovedEvent& event)
 {
@@ -131,4 +134,5 @@ bool CameraControlSystem::OnMouseMoveEvent(bge::MouseMovedEvent& event)
 
   m_LastMouseX = xPos;
   m_LastMouseY = yPos;
+  return false;
 }

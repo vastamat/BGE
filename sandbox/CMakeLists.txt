@@ -2,6 +2,7 @@ project(sandbox)
 
 # Define executable (.cpp only)
 add_executable(${PROJECT_NAME} 
+  src/BallControlSystem.cpp
   src/CameraControlSystem.cpp
   src/SandboxApp.cpp)
 
