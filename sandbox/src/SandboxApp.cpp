@@ -20,20 +20,70 @@ public:
     {
       // Floor
       bge::Entity floorEntity = world.CreateEntity();
-      bge::Vec3f position(0.0f, -10.0f, -5.0f);
-      bge::Vec3f size(10.0f, 2.0f, 10.0f);
-      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
+      bge::Vec3f position(0.0f, -20.0f, -5.0f);
+      bge::Vec3f size(20.0f, 1.0f, 20.0f);
+      bge::Quatf rotation;
       physicsWorld.GetColliderSystem().AddBoxCollider(floorEntity, position,
                                                       rotation, size);
       // physicsWorld.GetColliderSystem().AddSphereCollider(floorEntity,
       // position, 2.0f);
     }
 
+    {
+      // Ceiling
+      bge::Entity ceiling = world.CreateEntity();
+      bge::Vec3f position(0.0f, 20.0f, -5.0f);
+      bge::Vec3f size(20.0f, 1.0f, 20.0f);
+      bge::Quatf rotation;
+      physicsWorld.GetColliderSystem().AddBoxCollider(ceiling, position,
+                                                      rotation, size);
+    }
+
+    {
+      // Right-side wall
+      bge::Entity wall = world.CreateEntity();
+      bge::Vec3f position(-20.5f, 0.0f, -5.0f);
+      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Quatf rotation(bge::Vec3f(0.0f, 0.0f, bge::ToRadians(90.0f)));
+      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
+                                                      size);
+    }
+
+    {
+      // Left-side wall
+      bge::Entity wall = world.CreateEntity();
+      bge::Vec3f position(20.5f, 0.0f, -5.0f);
+      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Quatf rotation(bge::Vec3f(0.0f, 0.0f, bge::ToRadians(90.0f)));
+      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
+                                                      size);
+    }
+
+    {
+      // forward-side wall
+      bge::Entity wall = world.CreateEntity();
+      bge::Vec3f position(0.0f, 0.0f, 16.5f);
+      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
+      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
+                                                      size);
+    }
+
+    {
+      // back-side wall
+      bge::Entity wall = world.CreateEntity();
+      bge::Vec3f position(0.0f, 0.0f, -26.5f);
+      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
+      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
+                                                      size);
+    }
+
     bge::Entity entity = world.CreateEntity();
 
     // Add Physics body
-    physicsWorld.GetRigidBodySystem().AddBoxBodyComponent(entity, 1.0f, 1.0f,
-                                                          1.0f, 1.0f);
+    physicsWorld.GetRigidBodySystem().AddSphereBodyComponent(entity, 1.0f,
+                                                             1.0f);
     physicsWorld.GetRigidBodySystem().SetBodyPosition(
         entity, bge::Vec3f(0.0f, 0.0f, -5.0f));
 
@@ -41,7 +91,7 @@ public:
     // bge::Transform transform;
     // transform.Translate(bge::Vec3f(0.0f, 0.0f, -5.0f));
     bge::DynamicMeshData meshCompData;
-    meshCompData.m_Mesh = renderWorld.LoadMesh("res/models/cube.obj");
+    meshCompData.m_Mesh = renderWorld.LoadMesh("res/models/sphere.obj");
     meshCompData.m_Material.m_Shader =
         renderWorld.LoadShader("res/shaders/basic");
     meshCompData.m_Material.m_Textures.push_back(
