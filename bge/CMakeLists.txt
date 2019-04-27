@@ -38,6 +38,7 @@ add_library(${PROJECT_NAME} STATIC
 
   src/util/FileIO.cpp
   src/util/RandomNumberGenerator.cpp
+  src/util/Timer.cpp
   
   src/video/UnixWindow.cpp)
 
