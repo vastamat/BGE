@@ -12,11 +12,17 @@
 namespace bge
 {
 
-constexpr int32 c_DesiredFPS = 25;
+// Fixed update frame limiter
+constexpr int32 c_DesiredUpdateFPS = 25;
 constexpr int32 c_MillisPerSecond = 1000;
-constexpr int32 c_DesiredFrameTimeMS = c_MillisPerSecond / c_DesiredFPS;
+constexpr int32 c_DesiredUpdateFrameMS = c_MillisPerSecond / c_DesiredUpdateFPS;
 constexpr int32 c_MaxUpdatesPerFrame = 5;
-constexpr float c_FixedDeltaSeconds = c_DesiredFrameTimeMS / 1000.0f;
+constexpr float c_FixedUpdateDeltaSeconds = c_DesiredUpdateFrameMS / 1000.0f;
+
+// Variable Render frame limiter (runs as quick as possible with a set limit)
+// Must be more than the fixed update, or the sleep will disrupt the fixed timer
+constexpr float c_DesiredRenderFPS = 60.0f;
+constexpr float c_DesiredRenderFrameMS = c_MillisPerSecond / c_DesiredRenderFPS;
 
 Application* Application::s_Instance = nullptr;
 
@@ -49,30 +55,44 @@ void Application::Run()
 {
   BGE_CORE_TRACE("Start running the application!.");
 
-  Timer timer;
-  float millisElapsed = timer.GetElapsedMilli();
+  Timer updateTimer;
+  float millisElapsed = updateTimer.GetElapsedMilli();
+
+  Timer renderTimer;
 
   while (m_Running)
   {
-    std::int32_t numUpdates = 0;
+    int32 numUpdates = 0;
 
-    while (timer.GetElapsedMilli() > millisElapsed &&
+    while (updateTimer.GetElapsedMilli() > millisElapsed &&
            numUpdates < c_MaxUpdatesPerFrame)
     {
-      millisElapsed += c_DesiredFrameTimeMS;
+      millisElapsed += c_DesiredUpdateFrameMS;
       ++numUpdates;
 
-      m_World.Update(c_FixedDeltaSeconds);
+      m_World.Update(c_FixedUpdateDeltaSeconds);
     }
 
-    float interpolation =
-        (timer.GetElapsedMilli() + c_DesiredFrameTimeMS - millisElapsed) /
-        c_DesiredFrameTimeMS;
+    // Get how close we are to the next fixed update
+    float interpolation = (updateTimer.GetElapsedMilli() +
+                           c_DesiredUpdateFrameMS - millisElapsed) /
+                          c_DesiredUpdateFrameMS;
 
     m_World.Render(interpolation);
 
     m_Window.OnTick();
-    // std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+    float elapsed = renderTimer.GetElapsedMilli();
+    if (elapsed < c_DesiredRenderFrameMS)
+    {
+      std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(
+          c_DesiredRenderFrameMS - elapsed));
+    }
+    renderTimer.Renew();
+
+    // BGE_CORE_INFO("Frame completed in {0} milli", elapsed);
+    // BGE_CORE_INFO("numUpdates: {0}", numUpdates);
+    // BGE_CORE_INFO("interpolation: {0}", interpolation);
   }
 }
 
