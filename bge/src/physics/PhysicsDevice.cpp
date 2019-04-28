@@ -197,7 +197,7 @@ CollidedBodies Simulate()
     nudge::collide(&s_ActiveBodies, &s_ContactData, s_Bodies, s_Colliders,
                    connections, temporary);
 
-    CollidedBodies collidedBodies;
+    // CollidedBodies collidedBodies;
     // collidedBodies.m_Count = s_ContactData.count;
     // memcpy(collidedBodies.m_Bodies, s_ContactData.bodies,
     //        s_ContactData.count * sizeof(s_ContactData.bodies[0]));
@@ -247,10 +247,9 @@ CollidedBodies Simulate()
 
     // Move active s_Bodies.
     nudge::advance(s_ActiveBodies, s_Bodies, s_TimeStep);
-
-    // return collided bodies
-    return collidedBodies;
   }
+
+  return CollidedBodies();
 }
 
 void SetGravity(float gravity) { s_Gravity = gravity; }
@@ -263,7 +262,7 @@ void MakeBoxCollider(Entity entity, const Vec3f& position,
   BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
                   "This entity already has a rigid body!");
 
-  uint32 collider = s_Colliders.boxes.count++;
+  int32 collider = s_Colliders.boxes.count++;
   s_EntitiesWithBodies.push_back(entity);
 
   s_Colliders.boxes.transforms[collider] = s_IdentityTransform;
@@ -279,7 +278,7 @@ void MakeBoxCollider(Entity entity, const Vec3f& position,
 
   s_Colliders.boxes.tags[collider] = collider;
 
-  RigidBody rigidBody{collider, -1, s_EntitiesWithBodies.size() - 1};
+  RigidBody rigidBody{collider, -1, int32(s_EntitiesWithBodies.size() - 1)};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 
@@ -290,7 +289,7 @@ void MakeSphereCollider(Entity entity, const Vec3f& position, float radius)
   BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
                   "This entity already has a rigid body!");
 
-  uint32 collider = s_Colliders.spheres.count++;
+  int32 collider = s_Colliders.spheres.count++;
   s_EntitiesWithBodies.push_back(entity);
 
   s_Colliders.spheres.transforms[collider] = s_IdentityTransform;
@@ -302,7 +301,7 @@ void MakeSphereCollider(Entity entity, const Vec3f& position, float radius)
 
   s_Colliders.spheres.tags[collider] = collider + s_MaxBoxCount;
 
-  RigidBody rigidBody{collider, -1, s_EntitiesWithBodies.size() - 1};
+  RigidBody rigidBody{collider, -1, int32(s_EntitiesWithBodies.size() - 1)};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 
@@ -422,8 +421,8 @@ void CreateBox(Entity entity, float mass, float cx, float cy, float cz)
   BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
                   "This entity already has a rigid body!");
 
-  uint32 body = s_Bodies.count++;
-  uint32 collider = s_Colliders.boxes.count++;
+  int32 body = s_Bodies.count++;
+  int32 collider = s_Colliders.boxes.count++;
   s_EntitiesWithBodies.push_back(entity);
 
   float k = mass * (1.0f / 3.0f);
@@ -451,7 +450,7 @@ void CreateBox(Entity entity, float mass, float cx, float cy, float cz)
   s_Colliders.boxes.data[collider].size[2] = cz;
   s_Colliders.boxes.tags[collider] = collider;
 
-  RigidBody rigidBody{collider, body, s_EntitiesWithBodies.size() - 1};
+  RigidBody rigidBody{collider, body, int32(s_EntitiesWithBodies.size() - 1)};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 
@@ -463,8 +462,8 @@ void CreateSphere(Entity entity, float mass, float radius)
   BGE_CORE_ASSERT(s_EntityToRigidBody.count(entity.GetId()) == 0,
                   "This entity already has a rigid body!");
 
-  uint32 body = s_Bodies.count++;
-  uint32 collider = s_Colliders.spheres.count++;
+  int32 body = s_Bodies.count++;
+  int32 collider = s_Colliders.spheres.count++;
   s_EntitiesWithBodies.push_back(entity);
 
   float k = 2.5f / (mass * radius * radius);
@@ -486,7 +485,7 @@ void CreateSphere(Entity entity, float mass, float radius)
   s_Colliders.spheres.data[collider].radius = radius;
   s_Colliders.spheres.tags[collider] = collider + s_MaxBoxCount;
 
-  RigidBody rigidBody{collider, body, s_EntitiesWithBodies.size() - 1};
+  RigidBody rigidBody{collider, body, int32(s_EntitiesWithBodies.size() - 1)};
   s_EntityToRigidBody[entity.GetId()] = rigidBody;
 }
 

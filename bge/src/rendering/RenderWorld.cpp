@@ -103,6 +103,8 @@ bool RenderWorld::OnWindowClose(WindowCloseEvent& event)
   m_MeshLibrary.ClearLibrary();
   m_ShaderLibrary.ClearLibrary();
   m_TextureLibrary.ClearLibrary();
+
+  return false;
 }
 
 } // namespace bge
