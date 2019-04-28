@@ -81,7 +81,7 @@ Task* GetTask()
     if (stealQueue == queue)
     {
       // don't try to steal from ourselves
-      std::this_thread::yield();
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
       return nullptr;
     }
 
@@ -92,7 +92,7 @@ Task* GetTask()
     {
       // we couldn't steal a job from the other queue either, so we just yield
       // our time slice for now
-      std::this_thread::yield();
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
       return nullptr;
     }
 
