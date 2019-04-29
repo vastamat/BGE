@@ -7,7 +7,7 @@
 CameraControlSystem::CameraControlSystem(uint32 trackedCameraId)
     : m_TrackedCameraId(trackedCameraId)
 {
-  bge::Application::Get().GetWindow().SetCursor(false);
+  // bge::Application::Get().GetWindow().SetCursor(false);
 }
 
 void CameraControlSystem::Tick(float deltaSeconds)
@@ -27,7 +27,7 @@ void CameraControlSystem::Tick(float deltaSeconds)
   bge::Vec3f translationAmount =
       (zAxis * m_Forward) + (xAxis * m_Right) + (yAxis * m_Up * 0.001f);
 
-  m_Position += translationAmount * 100;
+  m_Position += translationAmount * 200;
 
   bge::Mat4f view =
       orientation.ToMat4() * bge::GenTranslationMat(m_Position * -1);

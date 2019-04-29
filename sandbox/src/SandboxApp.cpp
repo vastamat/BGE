@@ -1,9 +1,40 @@
 #include <core/Application.h>
 #include <logging/Log.h>
 #include <math/Transform.h>
+#include <util/RandomNumberGenerator.h>
 
 #include "BallControlSystem.h"
 #include "CameraControlSystem.h"
+
+bge::Entity AddBall(bge::World& world, bge::PhysicsWorld& physicsWorld,
+                    bge::RenderWorld& renderWorld, float mass = 1.0f)
+{
+  bge::RandomNumberGenerator rng;
+  bge::Entity entity = world.CreateEntity();
+
+  float x = rng.GenRandReal(-15.0f, 15.0f);
+  float y = rng.GenRandReal(-15.0f, 15.0f);
+  float z = rng.GenRandReal(-15.0f, 15.0f);
+
+  // Add Physics body
+  physicsWorld.GetRigidBodySystem().AddSphereBodyComponent(entity, mass, mass);
+  physicsWorld.GetRigidBodySystem().SetBodyPosition(entity,
+                                                    bge::Vec3f(x, y, z));
+
+  // Add the dynamic mesh
+  // bge::Transform transform;
+  // transform.Translate(bge::Vec3f(0.0f, 0.0f, -5.0f));
+  bge::DynamicMeshData meshCompData;
+  meshCompData.m_Mesh = renderWorld.LoadMesh("res/models/sphere.obj");
+  meshCompData.m_Material.m_Shader =
+      renderWorld.LoadShader("res/shaders/basic");
+  meshCompData.m_Material.m_Textures.push_back(
+      renderWorld.LoadTexture2D("res/textures/bricks.jpg"));
+
+  renderWorld.GetDynamicMeshSystem().AddComponent(entity, meshCompData);
+
+  return entity;
+}
 
 class Sandbox : public bge::Application
 {
@@ -41,31 +72,21 @@ public:
     }
 
     {
-      // Right-side wall
+      // left-side wall
       bge::Entity wall = world.CreateEntity();
-      bge::Vec3f position(-20.5f, 0.0f, -5.0f);
-      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Vec3f position(-21.f, 0.0f, -5.0f);
+      bge::Vec3f size(19.f, 1.0f, 20.0f);
       bge::Quatf rotation(bge::Vec3f(0.0f, 0.0f, bge::ToRadians(90.0f)));
       physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
                                                       size);
     }
 
     {
-      // Left-side wall
+      // right-side wall
       bge::Entity wall = world.CreateEntity();
-      bge::Vec3f position(20.5f, 0.0f, -5.0f);
-      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Vec3f position(21.0f, 0.0f, -5.0f);
+      bge::Vec3f size(19.0f, 1.0f, 20.0f);
       bge::Quatf rotation(bge::Vec3f(0.0f, 0.0f, bge::ToRadians(90.0f)));
-      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
-                                                      size);
-    }
-
-    {
-      // forward-side wall
-      bge::Entity wall = world.CreateEntity();
-      bge::Vec3f position(0.0f, 0.0f, 16.5f);
-      bge::Vec3f size(18.5f, 1.0f, 20.0f);
-      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
       physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
                                                       size);
     }
@@ -73,32 +94,29 @@ public:
     {
       // back-side wall
       bge::Entity wall = world.CreateEntity();
-      bge::Vec3f position(0.0f, 0.0f, -26.5f);
-      bge::Vec3f size(18.5f, 1.0f, 20.0f);
+      bge::Vec3f position(0.0f, 0.0f, 16.0f);
+      bge::Vec3f size(20.0f, 1.0f, 19.0f);
       bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
       physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
                                                       size);
     }
 
-    bge::Entity entity = world.CreateEntity();
+    {
+      // forward-side wall
+      bge::Entity wall = world.CreateEntity();
+      bge::Vec3f position(0.0f, 0.0f, -26.0f);
+      bge::Vec3f size(20.0f, 1.0f, 19.0f);
+      bge::Quatf rotation(bge::Vec3f(bge::ToRadians(90.0f), 0.0f, 0.0f));
+      physicsWorld.GetColliderSystem().AddBoxCollider(wall, position, rotation,
+                                                      size);
+    }
 
-    // Add Physics body
-    physicsWorld.GetRigidBodySystem().AddSphereBodyComponent(entity, 1.0f,
-                                                             1.0f);
-    physicsWorld.GetRigidBodySystem().SetBodyPosition(
-        entity, bge::Vec3f(0.0f, 0.0f, -5.0f));
+    for (size_t i = 0; i < 200; i++)
+    {
+      AddBall(world, physicsWorld, renderWorld);
+    }
 
-    // Add the dynamic mesh
-    // bge::Transform transform;
-    // transform.Translate(bge::Vec3f(0.0f, 0.0f, -5.0f));
-    bge::DynamicMeshData meshCompData;
-    meshCompData.m_Mesh = renderWorld.LoadMesh("res/models/sphere.obj");
-    meshCompData.m_Material.m_Shader =
-        renderWorld.LoadShader("res/shaders/basic");
-    meshCompData.m_Material.m_Textures.push_back(
-        renderWorld.LoadTexture2D("res/textures/bricks.jpg"));
-
-    renderWorld.GetDynamicMeshSystem().AddComponent(entity, meshCompData);
+    bge::Entity entity = AddBall(world, physicsWorld, renderWorld);
 
     std::unique_ptr<CameraControlSystem> cameraControlSystem =
         std::make_unique<CameraControlSystem>(cameraId);
@@ -115,8 +133,6 @@ int main(int argc, char** argv)
 {
   bge::Log::Init();
   BGE_INFO("Initialized Log!");
-  int a = 5;
-  BGE_INFO("Hello! Var={0}", a);
 
   auto app = std::make_unique<Sandbox>();
   app->Run();
