@@ -37,9 +37,10 @@ Mesh MeshLibrary::GetMesh(const std::string& filepath)
   std::vector<tinyobj::material_t> materials;
   std::string warn, err;
 
-  BGE_CORE_ASSERT(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
-                                   filepath.c_str()),
-                  "Unable to load obj file")
+  bool loadSuccess = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
+                                      filepath.c_str());
+
+  BGE_CORE_ASSERT(loadSuccess, "Unable to load obj file")
 
   for (const auto& shape : shapes)
   {
