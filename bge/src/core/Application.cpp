@@ -59,9 +59,14 @@ void Application::Run()
   float millisElapsed = updateTimer.GetElapsedMilli();
 
   Timer renderTimer;
+  float averageAccumulator = 0.0f;
+  int frameCounter = 0;
+  int framesToAverage = 100;
 
   while (m_Running)
   {
+    renderTimer.Renew();
+
     int32 numUpdates = 0;
 
     while (updateTimer.GetElapsedMilli() > millisElapsed &&
@@ -88,9 +93,16 @@ void Application::Run()
       std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(
           c_DesiredRenderFrameMS - elapsed));
     }
-    renderTimer.Renew();
 
-    // BGE_CORE_INFO("Frame completed in {0} milli", elapsed);
+    averageAccumulator += elapsed;
+    ++frameCounter;
+    if (frameCounter == framesToAverage)
+    {
+      BGE_CORE_INFO("Average frame time of {0} frames: {1}", frameCounter,
+                    averageAccumulator / framesToAverage);
+      averageAccumulator = 0.0f;
+      frameCounter = 0;
+    }
     // BGE_CORE_INFO("numUpdates: {0}", numUpdates);
     // BGE_CORE_INFO("interpolation: {0}", interpolation);
   }
