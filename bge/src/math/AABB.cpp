@@ -5,15 +5,11 @@
 namespace bge
 {
 
-// ------------------------------------------------------------------------------
-
 AABB::AABB(Vec3f min, Vec3f max)
     : m_MinExtent(min)
     , m_MaxExtent(max)
 {
 }
-
-// ------------------------------------------------------------------------------
 
 // Transform all 8 points of the AABB and choose new min/max
 AABB AABB::Transform(const Mat4f& transform) const
@@ -87,21 +83,15 @@ AABB AABB::Transform(const Mat4f& transform) const
   return AABB(Vec3f(min[0], min[1], min[2]), Vec3f(max[0], max[1], max[2]));
 }
 
-// ------------------------------------------------------------------------------
-
 AABB AABB::Expand(const Vec3f& amt) const
 {
   return AABB(m_MinExtent - amt, m_MaxExtent + amt);
 }
 
-// ------------------------------------------------------------------------------
-
 AABB AABB::MoveTo(const Vec3f& destination) const
 {
   return Translate(destination - GetCenter());
 }
-
-// ------------------------------------------------------------------------------
 
 bool AABB::Intersects(const AABB& other) const
 {
@@ -109,14 +99,10 @@ bool AABB::Intersects(const AABB& other) const
          (m_MinExtent <= other.m_MaxExtent);
 }
 
-// ------------------------------------------------------------------------------
-
 bool AABB::Contains(const Vec3f& point) const
 {
   return (point >= m_MinExtent) && (point <= m_MaxExtent);
 }
-
-// ------------------------------------------------------------------------------
 
 bool AABB::Contains(const AABB& other) const
 {
@@ -124,14 +110,10 @@ bool AABB::Contains(const AABB& other) const
          (other.m_MaxExtent <= m_MaxExtent);
 }
 
-// ------------------------------------------------------------------------------
-
 AABB AABB::Translate(const Vec3f& amt) const
 {
   return AABB(m_MinExtent + amt, m_MaxExtent + amt);
 }
-
-// ------------------------------------------------------------------------------
 
 AABB AABB::ScaleFromCenter(const Vec3f& amt) const
 {
@@ -140,14 +122,10 @@ AABB AABB::ScaleFromCenter(const Vec3f& amt) const
   return AABB(center - scaledExtents, center + scaledExtents);
 }
 
-// ------------------------------------------------------------------------------
-
 AABB AABB::ScaleFromOrigin(const Vec3f& amt) const
 {
   return AABB(m_MinExtent * amt, m_MaxExtent * amt);
 }
-
-// ------------------------------------------------------------------------------
 
 AABB AABB::AddPoint(const Vec3f& other) const
 {
@@ -155,36 +133,24 @@ AABB AABB::AddPoint(const Vec3f& other) const
               GetMaxValues(m_MaxExtent, other));
 }
 
-// ------------------------------------------------------------------------------
-
 AABB AABB::AddAABB(const AABB& other) const
 {
   return AABB(GetMinValues(m_MinExtent, other.m_MinExtent),
               GetMaxValues(m_MaxExtent, other.m_MaxExtent));
 }
 
-// ------------------------------------------------------------------------------
-
 Vec3f AABB::GetCenter() const { return (m_MinExtent + m_MaxExtent) * 0.5f; }
 
-// ------------------------------------------------------------------------------
-
 Vec3f AABB::GetExtents() const { return (m_MaxExtent - m_MinExtent) * 0.5f; }
-
-// ------------------------------------------------------------------------------
 
 bool AABB::operator==(const AABB& other) const
 {
   return m_MinExtent == other.m_MinExtent && m_MaxExtent == other.m_MaxExtent;
 }
 
-// ------------------------------------------------------------------------------
-
 bool AABB::operator!=(const AABB& other) const
 {
   return m_MinExtent != other.m_MinExtent && m_MaxExtent != other.m_MaxExtent;
 }
-
-// ------------------------------------------------------------------------------
 
 } // namespace bge
