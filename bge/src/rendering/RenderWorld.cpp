@@ -56,15 +56,16 @@ void RenderWorld::Render(float interpolation)
   }
 }
 
-uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float fov, float near,
-                              float far)
+uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float fov, float nearVal,
+                              float farVal)
 {
-  return m_CameraManager.AddPerspective(viewport, fov, near, far);
+  return m_CameraManager.AddPerspective(viewport, fov, nearVal, farVal);
 }
 
-uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float near, float far)
+uint32 RenderWorld::AddCamera(const Vec4i32& viewport, float nearVal,
+                              float farVal)
 {
-  return m_CameraManager.AddOrthographic(viewport, near, far);
+  return m_CameraManager.AddOrthographic(viewport, nearVal, farVal);
 }
 
 void RenderWorld::SetView(uint32 cameraId, Mat4f view)

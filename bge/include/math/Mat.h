@@ -350,7 +350,7 @@ template <typename T> Mat<T, 4> GenScalingMat(const Vec<T, 3>& scale)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-Mat<T, 4> GenOrthoMat(T left, T rightAxis, T bottom, T top, T near, T far)
+Mat<T, 4> GenOrthoMat(T left, T rightAxis, T bottom, T top, T nearVal, T farVal)
 {
   Mat<T, 4> rtn;
 
@@ -360,8 +360,8 @@ Mat<T, 4> GenOrthoMat(T left, T rightAxis, T bottom, T top, T near, T far)
   rtn[3 + 0 * 4] = -(rightAxis + left) / (rightAxis - left);
   rtn[3 + 1 * 4] = -(top + bottom) / (top - bottom);
 
-  rtn[2 + 2 * 4] = -static_cast<T>(2.0) / (far - near);
-  rtn[3 + 2 * 4] = -(far + near) / (far - near);
+  rtn[2 + 2 * 4] = -static_cast<T>(2.0) / (farVal - nearVal);
+  rtn[3 + 2 * 4] = -(farVal + nearVal) / (farVal - nearVal);
 
   return rtn;
 }
@@ -369,8 +369,8 @@ Mat<T, 4> GenOrthoMat(T left, T rightAxis, T bottom, T top, T near, T far)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-constexpr Mat<T, 4> GenPerspectiveMat(T FovRadians, T aspectRatio, T near,
-                                      T far)
+constexpr Mat<T, 4> GenPerspectiveMat(T FovRadians, T aspectRatio, T nearVal,
+                                      T farVal)
 {
   Mat<T, 4> rtn;
 
@@ -380,8 +380,9 @@ constexpr Mat<T, 4> GenPerspectiveMat(T FovRadians, T aspectRatio, T near,
   rtn[1 + 1 * 4] = static_cast<T>(1.0) / (tanHalfFoV);
   rtn[2 + 3 * 4] = static_cast<T>(-1.0);
 
-  rtn[2 + 2 * 4] = -(far + near) / (far - near);
-  rtn[3 + 2 * 4] = -(static_cast<T>(2.0) * far * near) / (far - near);
+  rtn[2 + 2 * 4] = -(farVal + nearVal) / (farVal - nearVal);
+  rtn[3 + 2 * 4] =
+      -(static_cast<T>(2.0) * farVal * nearVal) / (farVal - nearVal);
 
   return rtn;
 }

@@ -59,24 +59,27 @@ template <> inline long double Exp(long double val) { return expl(val); }
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T Log(T val)
+template <typename T> inline T LogOfVal(T val)
 {
   BGE_CORE_ASSERT(false, "Unsupported type");
 }
-template <> inline float Log(float val) { return logf(val); }
-template <> inline double Log(double val) { return log(val); }
-template <> inline long double Log(long double val) { return logl(val); }
+template <> inline float LogOfVal(float val) { return logf(val); }
+template <> inline double LogOfVal(double val) { return log(val); }
+template <> inline long double LogOfVal(long double val) { return logl(val); }
 
 // ------------------------------------------------------------------------------
 
 template <typename T> inline T Logx(T val, T base)
 {
-  return Log(val) / Log(base);
+  return LogOfVal(val) / LogOfVal(base);
 }
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T Log2(T val) { return Log(val) * c_log2E<T>; }
+template <typename T> inline T Log2(T val)
+{
+  return LogOfVal(val) * c_log2E<T>;
+}
 
 // ------------------------------------------------------------------------------
 
