@@ -38,8 +38,8 @@ static std::vector<Entity> s_EntitiesWithBodies;
 static constexpr nudge::Transform s_IdentityTransform = {
     {}, 0, {0.0f, 0.0f, 0.0f, 1.0f}};
 
-static inline void QuaternionConcat(float r[4], const float a[4],
-                                    const float b[4])
+static FORCEINLINE void QuaternionConcat(float r[4], const float a[4],
+                                         const float b[4])
 {
   r[0] = b[0] * a[3] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1];
   r[1] = b[1] * a[3] + a[1] * b[3] + a[2] * b[0] - a[0] * b[2];
@@ -47,8 +47,8 @@ static inline void QuaternionConcat(float r[4], const float a[4],
   r[3] = a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2];
 }
 
-static inline void QuaternionTransform(float r[3], const float a[4],
-                                       const float b[3])
+static FORCEINLINE void QuaternionTransform(float r[3], const float a[4],
+                                            const float b[3])
 {
   float t[3];
   t[0] = a[1] * b[2] - a[2] * b[1];
@@ -64,8 +64,8 @@ static inline void QuaternionTransform(float r[3], const float a[4],
   r[2] = b[2] + a[3] * t[2] + a[0] * t[1] - a[1] * t[0];
 }
 
-static inline void MakeMatrix(float r[16], const float s[3], const float q[4],
-                              const float t[3])
+static FORCEINLINE void MakeMatrix(float r[16], const float s[3],
+                                   const float q[4], const float t[3])
 {
   float kx = q[0] + q[0];
   float ky = q[1] + q[1];

@@ -17,7 +17,7 @@ public:
     BGE_CORE_ASSERT(m_Count > 1, "Count must be higher than 1");
   }
 
-  template <typename T> inline bool Split(uint32 count) const
+  template <typename T> FORCEINLINE bool Split(uint32 count) const
   {
     return (count > m_Count);
   }
@@ -39,7 +39,7 @@ public:
     BGE_CORE_ASSERT(m_Size > 1, "Size must be more than 1");
   }
 
-  template <typename T> inline bool Split(uint32 count) const
+  template <typename T> FORCEINLINE bool Split(uint32 count) const
   {
     return (count * sizeof(T) > m_Size);
   }
