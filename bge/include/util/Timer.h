@@ -22,7 +22,7 @@ public:
   float GetElapsedSeconds() const;
 
 private:
-  TimePoint m_start;
+  TimePoint m_Start;
 };
 
 } // namespace bge

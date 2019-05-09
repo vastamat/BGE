@@ -4,17 +4,17 @@ namespace bge
 {
 
 Timer::Timer()
-    : m_start(TimePoint::clock::now())
+    : m_Start(TimePoint::clock::now())
 {
 }
 
-void Timer::Renew() { m_start = TimePoint::clock::now(); }
+void Timer::Renew() { m_Start = TimePoint::clock::now(); }
 
 float Timer::GetElapsedMilli() const
 {
   using Milli = std::chrono::duration<float, std::milli>;
 
-  return std::chrono::duration_cast<Milli>((TimePoint::clock::now() - m_start))
+  return std::chrono::duration_cast<Milli>((TimePoint::clock::now() - m_Start))
       .count();
 }
 
