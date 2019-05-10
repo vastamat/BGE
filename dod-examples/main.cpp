@@ -2,14 +2,19 @@
 
 #include <iostream>
 
+// The size of the square matrix. Actual allocated elements number is
+// matrixSize^2. If the size of the allocated elements cause a crash from stack
+// overflow, reduce the size here.
+constexpr int matrixSize = 500;
+
 void ProcessByRow()
 {
-  bool boolMatrix[500][500];
+  bool boolMatrix[matrixSize][matrixSize];
 
   bge::Timer timer;
-  for (size_t row = 0; row < 500; ++row)
+  for (size_t row = 0; row < matrixSize; ++row)
   {
-    for (size_t col = 0; col < 500; ++col)
+    for (size_t col = 0; col < matrixSize; ++col)
     {
       boolMatrix[row][col] = true;
     }
@@ -20,12 +25,12 @@ void ProcessByRow()
 
 void ProcessByColumn()
 {
-  bool boolMatrix[500][500];
+  bool boolMatrix[matrixSize][matrixSize];
 
   bge::Timer timer;
-  for (size_t row = 0; row < 500; ++row)
+  for (size_t row = 0; row < matrixSize; ++row)
   {
-    for (size_t col = 0; col < 500; ++col)
+    for (size_t col = 0; col < matrixSize; ++col)
     {
       boolMatrix[col][row] = true;
     }
@@ -36,20 +41,20 @@ void ProcessByColumn()
 
 void ProcessPointerArray()
 {
-  bool* pointers[500][500];
+  bool* pointers[matrixSize][matrixSize];
   // populate the array first
-  for (size_t row = 0; row < 500; ++row)
+  for (size_t row = 0; row < matrixSize; ++row)
   {
-    for (size_t col = 0; col < 500; ++col)
+    for (size_t col = 0; col < matrixSize; ++col)
     {
       pointers[row][col] = new bool(true);
     }
   }
 
   bge::Timer timer;
-  for (size_t row = 0; row < 500; ++row)
+  for (size_t row = 0; row < matrixSize; ++row)
   {
-    for (size_t col = 0; col < 500; ++col)
+    for (size_t col = 0; col < matrixSize; ++col)
     {
       *pointers[row][col] = false;
     }
