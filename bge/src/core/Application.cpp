@@ -78,7 +78,7 @@ void Application::Run()
       m_World.Update(c_FixedUpdateDeltaSeconds);
     }
 
-    // Get how close we are to the next fixed update
+    // Calculate how close we are to the next fixed update
     float interpolation = (updateTimer.GetElapsedMilli() +
                            c_DesiredUpdateFrameMS - millisElapsed) /
                           c_DesiredUpdateFrameMS;

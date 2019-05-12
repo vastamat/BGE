@@ -65,6 +65,8 @@ void ProcessPointerArray()
 
 int main()
 {
+  // Benchmarks in release build
+
   // Time it took to process by column: 0.008247 millis
   // Time it took to process by column: 0.030067 millis
   // Time it took to process by column: 0.031197 millis
