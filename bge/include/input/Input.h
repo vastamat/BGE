@@ -8,15 +8,14 @@
 
 namespace bge
 {
-
-class Input
+namespace Input
 {
-public:
-  static bool IsKeyPressed(KeyCode key);
-  static bool IsMouseButtonPressed(MouseButtonCode button);
-  static std::pair<float, float> GetMousePosition();
-  static float GetMouseX();
-  static float GetMouseY();
-};
 
+bool IsKeyPressed(KeyCode key);
+bool IsMouseButtonPressed(MouseButtonCode button);
+std::pair<float, float> GetMousePosition();
+float GetMouseX();
+float GetMouseY();
+
+} // namespace Input
 } // namespace bge

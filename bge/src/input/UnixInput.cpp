@@ -9,6 +9,9 @@
 namespace bge
 {
 
+namespace Input
+{
+
 static int GetGLFWKeyFromKeyCode(KeyCode key)
 {
   switch (key)
@@ -228,14 +231,14 @@ static int GetGLFWButtonFromMouseButtonCode(MouseButtonCode button)
   return GLFW_KEY_UNKNOWN;
 }
 
-bool Input::IsKeyPressed(KeyCode key)
+bool IsKeyPressed(KeyCode key)
 {
   GLFWwindow* window = static_cast<GLFWwindow*>(
       Application::Get().GetWindow().GetNativeWindow());
   int state = glfwGetKey(window, GetGLFWKeyFromKeyCode(key));
   return state == GLFW_PRESS || state == GLFW_REPEAT;
 }
-bool Input::IsMouseButtonPressed(MouseButtonCode button)
+bool IsMouseButtonPressed(MouseButtonCode button)
 {
   GLFWwindow* window = static_cast<GLFWwindow*>(
       Application::Get().GetWindow().GetNativeWindow());
@@ -243,7 +246,7 @@ bool Input::IsMouseButtonPressed(MouseButtonCode button)
       glfwGetMouseButton(window, GetGLFWButtonFromMouseButtonCode(button));
   return state == GLFW_PRESS;
 }
-std::pair<float, float> Input::GetMousePosition()
+std::pair<float, float> GetMousePosition()
 {
   GLFWwindow* window = static_cast<GLFWwindow*>(
       Application::Get().GetWindow().GetNativeWindow());
@@ -252,9 +255,10 @@ std::pair<float, float> Input::GetMousePosition()
 
   return {(float)xpos, (float)ypos};
 }
-float Input::GetMouseX() { return GetMousePosition().first; }
-float Input::GetMouseY() { return GetMousePosition().second; }
+float GetMouseX() { return GetMousePosition().first; }
+float GetMouseY() { return GetMousePosition().second; }
 
+} // namespace Input
 } // namespace bge
 
 #endif
