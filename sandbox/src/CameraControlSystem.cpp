@@ -7,7 +7,7 @@
 CameraControlSystem::CameraControlSystem(uint32 trackedCameraId)
     : m_TrackedCameraId(trackedCameraId)
 {
-  // bge::Application::Get().GetWindow().SetCursor(false);
+  bge::Application::Get().GetWindow().SetCursor(false);
 }
 
 void CameraControlSystem::Tick(float deltaSeconds)

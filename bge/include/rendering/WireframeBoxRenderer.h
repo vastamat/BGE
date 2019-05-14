@@ -16,9 +16,13 @@ public:
   void SetMesh(Mesh mesh);
   void SetShader(ShaderProgramHandle shader);
 
+  FORCEINLINE void SetEnabled(bool enabled) { m_IsEnabled = enabled; }
+
 private:
   Mesh m_BoxMesh;
   ShaderProgramHandle m_WireframeShader;
+
+  bool m_IsEnabled = false;
 };
 
 } // namespace bge

@@ -36,6 +36,13 @@ public:
   // Set the view matrix of an existing camera
   void SetView(uint32 cameraId, Mat4f view);
 
+  FORCEINLINE void EnableWireframe(bool enableBoxWireframe,
+                                   bool enableSphereWireframe)
+  {
+    m_WireframeBoxRenderer.SetEnabled(enableBoxWireframe);
+    m_WireframeSphereRenderer.SetEnabled(enableSphereWireframe);
+  }
+
   FORCEINLINE StaticMeshSystem& GetStaticMeshSystem()
   {
     return m_StaticMeshSystem;

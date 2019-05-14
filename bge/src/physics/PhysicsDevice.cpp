@@ -16,9 +16,9 @@ struct RigidBody
   int32 m_EntityArrayId{-1};
 };
 
-static constexpr uint32 s_MaxBodyCount = 2048;
-static constexpr uint32 s_MaxBoxCount = 2048;
-static constexpr uint32 s_MaxSphereCount = 2048;
+static constexpr uint32 s_MaxBodyCount = 8192;
+static constexpr uint32 s_MaxBoxCount = 8192;
+static constexpr uint32 s_MaxSphereCount = 8192;
 static constexpr uint32 s_Steps = 2;
 static constexpr uint32 s_Iterations = 20;
 static constexpr float s_TimeStep = 1.0f / (25.0f * (float)s_Steps);
@@ -127,7 +127,7 @@ void Initialize()
 
   // Allocate memory for simulation s_Arena.
   s_Arena.size = 64 * 1024 * 1024; // 64 MegaBytes
-  s_Arena.data = _mm_malloc(s_Arena.size, 4096);
+  s_Arena.data = _mm_malloc(s_Arena.size, 8192);
 
   // Allocate memory for s_Bodies, s_Colliders, and contacts.
   s_ActiveBodies.capacity = s_MaxBoxCount;

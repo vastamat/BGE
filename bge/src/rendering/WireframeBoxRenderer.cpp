@@ -8,6 +8,11 @@ namespace bge
 void WireframeBoxRenderer::RenderWireframes(const Mat4f& projection,
                                             const Mat4f& view)
 {
+  if (!m_IsEnabled)
+  {
+    return;
+  }
+
   // Set up the render state that's the same for all object
   RenderDevice::BindShaderProgram(m_WireframeShader);
   RenderDevice::SetUniformMat4(m_WireframeShader, "in_Projection", projection);

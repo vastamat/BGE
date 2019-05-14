@@ -49,6 +49,8 @@ public:
     uint32 cameraId = renderWorld.AddCamera(bge::Vec4i32(0, 0, 1280, 720),
                                             60.0f, 0.1f, 100.0f);
 
+    renderWorld.EnableWireframe(true, false);
+
     {
       // Floor
       bge::Entity floorEntity = world.CreateEntity();
@@ -111,7 +113,7 @@ public:
                                                       size);
     }
 
-    for (size_t i = 0; i < 200; i++)
+    for (size_t i = 0; i < 8185; i++)
     {
       AddBall(world, physicsWorld, renderWorld);
     }

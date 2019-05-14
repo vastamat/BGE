@@ -98,8 +98,8 @@ void Application::Run()
     ++frameCounter;
     if (frameCounter == framesToAverage)
     {
-      BGE_CORE_INFO("Average frame time of {0} frames: {1}", frameCounter,
-                    averageAccumulator / framesToAverage);
+      BGE_CORE_ERROR("Average frame time of {0} frames: {1} ms", frameCounter,
+                     averageAccumulator / framesToAverage);
       averageAccumulator = 0.0f;
       frameCounter = 0;
     }
