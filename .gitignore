@@ -10,3 +10,6 @@ Build/
 build/ 
 bin/
 bin-int/
+
+# Documentation
+html
