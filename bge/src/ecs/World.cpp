@@ -47,6 +47,9 @@ void World::Update(float deltaTime)
   // No need to use the event callback which sends the event to the "app layer"
   // For now, entity deletion only matters for the sub-worlds
   OnEvent(event);
+
+  // Clear the list now that it's been handled
+  m_DestroyedEntities.clear();
 }
 
 void World::Render(float interpolation) { m_RenderWorld.Render(interpolation); }
