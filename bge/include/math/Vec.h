@@ -35,7 +35,6 @@ template <typename T, uint32 Size> struct Vec
 
   Vec(T arg1, T arg2)
   {
-    static_assert(Size == 2);
     m_Elements[0] = arg1;
     m_Elements[1] = arg2;
   }
