@@ -12,9 +12,9 @@ namespace bge
 
 // ------------------------------------------------------------------------------
 
-/////////////////////////////////////////////////
-/// Vector class which is templated to support many different types.
-/////////////////////////////////////////////////
+/**
+ * Vector class which is templated to support many different types.
+ */
 template <typename T, uint32 Size> struct Vec
 {
   Vec() { memset(m_Elements, 0, Size * sizeof(T)); }

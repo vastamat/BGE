@@ -14,28 +14,85 @@
 namespace bge
 {
 
+/**
+ * The render world which encompasses the whole rendering module
+ */
 class RenderWorld
 {
 public:
   RenderWorld();
 
+  /**
+   * Initializes state which needs construction to be completed
+   */
   void Init();
 
+  /**
+   * Sets the internal event callback variable
+   * It's used to broadcast events to the application layer
+   * @param callback the function pointer to use to broadcast events
+   */
   void SetEventCallback(const std::function<void(Event&)>& callback);
 
+  /**
+   * Renders the world
+   * @param interpolation shows how close the state is to the next game update
+   */
   void Render(float interpolation);
 
+  /**
+   * Loads a mesh from a filepath.
+   * @param filepath the filepath to the mesh, including the file name
+   * @return the loaded mesh
+   */
   Mesh LoadMesh(const std::string& filepath);
+
+  /**
+   * Loads a shader from a filepath.
+   * @param filepath the path to the file including the file name, but excluding
+   * the extension as that is added by the API-specific implementation
+   * @return the loaded shader handle
+   */
   ShaderProgramHandle LoadShader(const std::string& filepath);
+
+  /**
+   * Loads a 2D texture from a filepath.
+   * @param filepath the filepath to the texture, including the file name
+   * @return the loaded texture
+   */
   Texture2DHandle LoadTexture2D(const std::string& filepath);
 
-  // Perspective Camera
+  /**
+   * Add a perspective camera
+   * @param viewport the viewport of the camera
+   * @param fovDeg the field of view for the camera
+   * @param near the near value
+   * @param far the far value
+   * @return the index of the newly allocated camera.
+   */
   uint32 AddCamera(const Vec4i32& viewport, float fov, float near, float far);
-  // Orthographic Camera
+
+  /**
+   * Add an orthographic camera
+   * @param viewport the viewport of the camera
+   * @param near the near value
+   * @param far the far value
+   * @return the index of the newly allocated camera.
+   */
   uint32 AddCamera(const Vec4i32& viewport, float near, float far);
-  // Set the view matrix of an existing camera
+
+  /**
+   * Sets the view matrix of a single camera
+   * @param id the id of the camera
+   * @param view the view matrix
+   */
   void SetView(uint32 cameraId, Mat4f view);
 
+  /**
+   * Sets the state of wireframe renderers
+   * @param enableBoxWireframe flag for wireframe box rendering
+   * @param enableSphereWireframe flag for wireframe sphere rendering
+   */
   FORCEINLINE void EnableWireframe(bool enableBoxWireframe,
                                    bool enableSphereWireframe)
   {
@@ -52,9 +109,17 @@ public:
     return m_DynamicMeshSystem;
   }
 
+  /**
+   * Event handler function
+   * @param event the propagated event
+   */
   void OnEvent(Event& event);
 
 private:
+  /**
+   * Event handler for the window close event
+   * @param event the broadcast event
+   */
   bool OnWindowClose(WindowCloseEvent& event);
 
   // Systems

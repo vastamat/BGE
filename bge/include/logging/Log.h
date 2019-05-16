@@ -10,9 +10,15 @@
 namespace bge
 {
 
+/**
+ * Static class which holds the core and the client loggers
+ */
 class Log
 {
 public:
+  /**
+   * Initialize the loggers to be ready to use
+   */
   static void Init();
 
   FORCEINLINE static std::shared_ptr<spdlog::logger>& GetCoreLogger()

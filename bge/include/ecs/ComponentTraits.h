@@ -10,13 +10,16 @@ namespace bge
 namespace internal
 {
 
-/////////////////////////////////////////////////
-/// Generates a unique conponent Id by incrementing each call
-/////////////////////////////////////////////////
+/**
+ * Generates a unique conponent Id by incrementing each call
+ */
 uint32 GenerateUniqueTypeId();
 
 } // namespace internal
 
+/**
+ * @return unique id for the templated type
+ */
 template <typename T> uint32 GetUniqueTypeId()
 {
   static uint32 s_ComponentTypeId = internal::GenerateUniqueTypeId();

@@ -6,6 +6,9 @@
 namespace bge
 {
 
+/**
+ * Event which represents the movement of the mouse
+ */
 class MouseMovedEvent : public Event
 {
 public:
@@ -21,9 +24,12 @@ public:
   EVENT_CLASS_TYPE(MouseMoved)
 
 private:
-  float m_MouseX, m_MouseY;
+  float m_MouseX, m_MouseY; /**< the new x and y window coordinates */
 };
 
+/**
+ * Event which represents the scrolling of the mouse scroll
+ */
 class MouseScrolledEvent : public Event
 {
 public:
@@ -39,9 +45,12 @@ public:
   EVENT_CLASS_TYPE(MouseScrolled)
 
 private:
-  float m_XOffset, m_YOffset;
+  float m_XOffset, m_YOffset; /**< the new x and y scroll offsets */
 };
 
+/**
+ * Base class for mouse button events
+ */
 class MouseButtonEvent : public Event
 {
 public:
@@ -56,9 +65,12 @@ protected:
   {
   }
 
-  MouseButtonCode m_Button;
+  MouseButtonCode m_Button; /**< the button code of the button */
 };
 
+/**
+ * Event which represents the pressing of a mouse button
+ */
 class MouseButtonPressedEvent : public MouseButtonEvent
 {
 public:
@@ -70,6 +82,9 @@ public:
   EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
+/**
+ * Event which represents the releasing of a mouse button
+ */
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:

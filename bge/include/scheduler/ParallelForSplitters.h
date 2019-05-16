@@ -5,9 +5,9 @@
 namespace bge
 {
 
-/////////////////////////////////////////////////
-/// Splits the data based on the passed count.
-/////////////////////////////////////////////////
+/**
+ * Splits the data based on the passed count.
+ */
 class CountSplitter
 {
 public:
@@ -26,10 +26,10 @@ private:
   uint32 m_Count;
 };
 
-/////////////////////////////////////////////////
-/// Splits the data based on the data size in bytes (this is useful for
-/// splitting arrays into sizes that fit cache lines or the whole L1 cache)
-/////////////////////////////////////////////////
+/**
+ * Splits the data based on the data size in bytes (this is useful for
+ * splitting arrays into sizes that fit cache lines or the whole L1 cache)
+ */
 class DataSizeSplitter
 {
 public:

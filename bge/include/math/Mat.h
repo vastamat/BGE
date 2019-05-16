@@ -7,9 +7,9 @@ namespace bge
 
 // ------------------------------------------------------------------------------
 
-/////////////////////////////////////////////////
-/// Matrix class which is templated to support a 3x3 and 4x4 matrix.
-/////////////////////////////////////////////////
+/**
+ * Matrix class which is templated to support a 3x3 and 4x4 matrix.
+ */
 template <typename T, uint32 Size> struct Mat
 {
   Mat() { memset(m_Elements, 0, Size * Size * sizeof(T)); }

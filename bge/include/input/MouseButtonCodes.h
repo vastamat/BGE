@@ -2,6 +2,10 @@
 
 namespace bge
 {
+
+/**
+ * Enum containing all the supported mouse buttons by the framework.
+ */
 enum class MouseButtonCode
 {
   Unknown,
@@ -16,4 +20,5 @@ enum class MouseButtonCode
   MouseButton7,
   MouseButton8,
 };
+
 }

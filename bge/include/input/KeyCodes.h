@@ -2,6 +2,10 @@
 
 namespace bge
 {
+
+/**
+ * Enum containing all the supported keyboard keys by the framework.
+ */
 enum class KeyCode
 {
   Unknown,
@@ -99,4 +103,5 @@ enum class KeyCode
   AppMenu,
   Power,
 };
+
 }

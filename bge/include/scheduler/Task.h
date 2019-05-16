@@ -17,7 +17,7 @@ struct Task
   Task* m_Parent;          ///< parent of this task
   TaskFunction m_Function; ///< function to execute
   std::atomic_int32_t
-      m_UnfinishedTasks; /// number of unfinished tasks (1 by default for this)
+      m_UnfinishedTasks; ///< number of unfinished tasks (1 by default for this)
   char m_Data[c_SpaceForTaskData]; ///< bytes to pad the struct to 64 bytes;
                                    ///< This is also used to store data for the
                                    ///< task. If it's under c_spaceForTaskData

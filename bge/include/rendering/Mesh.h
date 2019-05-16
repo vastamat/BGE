@@ -5,6 +5,9 @@
 namespace bge
 {
 
+/**
+ * Mesh struct used for rendering
+ */
 struct Mesh
 {
   VertexArrayHandle m_VertexArray;

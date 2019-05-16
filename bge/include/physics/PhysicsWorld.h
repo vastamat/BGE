@@ -9,11 +9,22 @@
 namespace bge
 {
 
+/**
+ * The physics world which encompasses the whole physics module of the framework
+ */
 class PhysicsWorld
 {
 public:
+  /**
+   * Sets the internal event callback variable
+   * It's used to broadcast events to the application layer
+   * @param callback the function pointer to use to broadcast events
+   */
   void SetEventCallback(const std::function<void(Event&)>& callback);
 
+  /**
+   * Steps the physics simulation
+   */
   void Simulate();
 
   FORCEINLINE RigidBodySystem& GetRigidBodySystem()
@@ -22,6 +33,10 @@ public:
   }
   FORCEINLINE ColliderSystem& GetColliderSystem() { return m_ColliderSystem; }
 
+  /**
+   * Calls the OnEvent function of all systems
+   * @param event the broadcast event
+   */
   void OnEvent(Event& event);
 
 private:

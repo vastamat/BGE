@@ -9,6 +9,9 @@
 namespace bge
 {
 
+/**
+ * Base event for when a component is changed in an entity
+ */
 class ComponentChangeEvent : public Event
 {
 public:
@@ -26,10 +29,13 @@ public:
   }
 
 private:
-  Entity m_Entity;
-  uint32 m_ComponentTypeId;
+  Entity m_Entity;          /**< The entity whose had a change */
+  uint32 m_ComponentTypeId; /**< The component that was added or removed */
 };
 
+/**
+ * Event for when a component is added
+ */
 class ComponentAddedEvent : public ComponentChangeEvent
 {
 public:
@@ -41,6 +47,9 @@ public:
   EVENT_CLASS_TYPE(ComponentAdded)
 };
 
+/**
+ * Event for when a component is removed
+ */
 class ComponentRemovedEvent : public ComponentChangeEvent
 {
 public:
@@ -52,6 +61,10 @@ public:
   EVENT_CLASS_TYPE(ComponentRemoved)
 };
 
+/**
+ * Event which contains all entities which have been destroyed in a single game
+ * state update
+ */
 class EntitiesDestroyedEvent : public Event
 {
 public:
@@ -68,7 +81,7 @@ public:
   EVENT_CLASS_TYPE(EntitiesDestroyed)
 
 private:
-  std::vector<Entity> m_Entities;
+  std::vector<Entity> m_Entities; /**< The list of entities which are dead */
 };
 
 } // namespace bge

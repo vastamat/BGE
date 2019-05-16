@@ -7,6 +7,9 @@
 namespace bge
 {
 
+/**
+ * Event which represents the collided bodies in a single game state update
+ */
 class EntitiesCollidedEvent : public Event
 {
 public:
@@ -20,7 +23,7 @@ public:
   EVENT_CLASS_TYPE(CollidedBodies)
 
 private:
-  CollidedBodies m_CollidedBodies;
+  CollidedBodies m_CollidedBodies; /**< The collided bodies of the update */
 };
 
 } // namespace bge

@@ -6,9 +6,9 @@
 namespace bge
 {
 
-/////////////////////////////////////////////////
-/// Data that the parralel for task uses
-/////////////////////////////////////////////////
+/**
+ * Data that the parralel for task uses
+ */
 template <typename T, typename S> struct ParralelForTaskData
 {
   using DataType = T;
@@ -30,16 +30,16 @@ template <typename T, typename S> struct ParralelForTaskData
   SplitterType m_Splitter;
 };
 
-/////////////////////////////////////////////////
-/// The parralel for task function, which splits the passed data until it
-/// doesn't meet the split requirements and  then executes all the leaves
-/// example of splitting 5 elements into loops of 2 (or lower)
-///       *  - 5 elements
-///      / \
-///     *   * - 3/2 elements (execute 2)
-///    / \  
-///   *   *    - 2/1 (execute 2 and 1)
-/////////////////////////////////////////////////
+/**
+ * The parralel for task function, which splits the passed data until it
+ * doesn't meet the split requirements and  then executes all the leaves
+ * example of splitting 5 elements into loops of 2 (or lower)
+ *       *  - 5 elements
+ *      / \
+ *     *   * - 3/2 elements (execute 2)
+ *    / \
+ *   *   *    - 2/1 (execute 2 and 1)
+ */
 template <typename TaskData>
 void ParallelForTask(Task* task, const void* taskData)
 {
@@ -71,13 +71,17 @@ void ParallelForTask(Task* task, const void* taskData)
   }
 }
 
-/////////////////////////////////////////////////
-/// Executes a task which splits the passed data based on the splitter and once
-/// it reaches the maximum amount of splits it can, it executes the leaves
-/////////////////////////////////////////////////
+/**
+ * Executes a task which splits the passed data based on the splitter and once
+ * it reaches the maximum amount of splits it can, it executes the leaves
+ * @param data pointer to array of data for the task
+ * @param count number of elements in array
+ * @param function task to execute on every element of the data
+ * @param splitter how to split the data into multiple tasks
+ */
 template <typename DataType, typename SplitterType>
 Task* ParralelFor(DataType* data, uint32 count,
-                  void (*_function)(DataType*, uint32),
+                  void (*function)(DataType*, uint32),
                   const SplitterType& splitter)
 {
   using TaskData = ParralelForTaskData<DataType, SplitterType>;

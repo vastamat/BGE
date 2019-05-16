@@ -9,6 +9,9 @@
 namespace bge
 {
 
+/**
+ * Window Creation data
+ */
 struct WindowData
 {
   std::string m_Title;
@@ -26,6 +29,9 @@ struct WindowData
   }
 };
 
+/**
+ * The game window class
+ */
 class Window
 {
   using EventCallbackFn = std::function<void(Event&)>;
@@ -36,7 +42,15 @@ public:
 
   DELETE_COPY_AND_ASSIGN(Window);
 
+  /**
+   * Create/Start the window
+   * @param data window creation data
+   */
   void Create(const WindowData& data);
+
+  /**
+   * Destroy the window
+   */
   void Destroy();
 
   // Tick called every frame
@@ -56,7 +70,7 @@ public:
 private:
   class Impl;
 
-  std::unique_ptr<Impl> m_impl;
+  std::unique_ptr<Impl> m_impl; /**< Private implementation */
 };
 
 } // namespace bge

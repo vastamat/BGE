@@ -6,6 +6,9 @@
 namespace bge
 {
 
+/**
+ * Base event for key events
+ */
 class KeyEvent : public Event
 {
 public:
@@ -17,9 +20,12 @@ protected:
   {
   }
 
-  KeyCode m_KeyCode;
+  KeyCode m_KeyCode; /**< The keycode of the key */
 };
 
+/**
+ * Event which represents the pressing of a key
+ */
 class KeyPressedEvent : public KeyEvent
 {
 public:
@@ -34,9 +40,12 @@ public:
   EVENT_CLASS_TYPE(KeyPressed)
 
 private:
-  int32 m_RepeatCount;
+  int32 m_RepeatCount; /**< shows whether the key is held down */
 };
 
+/**
+ * Event which represents the releasing of a key
+ */
 class KeyReleasedEvent : public KeyEvent
 {
 public:
@@ -48,6 +57,9 @@ public:
   EVENT_CLASS_TYPE(KeyReleased)
 };
 
+/**
+ * Event which represents the typing of a character
+ */
 class KeyTypedEvent : public KeyEvent
 {
 public:

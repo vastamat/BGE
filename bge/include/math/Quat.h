@@ -7,9 +7,9 @@ namespace bge
 
 // ------------------------------------------------------------------------------
 
-/////////////////////////////////////////////////
-/// Quaternion class which is templated to support a float and double quats.
-/////////////////////////////////////////////////
+/**
+ * Quaternion class which is templated to support a float and double quats.
+ */
 template <typename T> struct Quat
 {
   Quat()
