@@ -7,6 +7,12 @@ namespace bge
 
 static constexpr uint32 c_MinFreeIndices = 1024;
 
+EntityManager::EntityManager()
+{
+  // Emplace the first entity which will act as the null (index of 0)
+  m_EntityVersion.push_back(0u);
+}
+
 Entity EntityManager::CreateEntity()
 {
   uint32 index = 0;
